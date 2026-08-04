@@ -1,0 +1,17 @@
+<header class="en-tete-page">
+  <div class="en-tete-page__titre">
+    <div class="en-tete-page__icone" [style.background]="identite.couleur + '1a'" [style.color]="identite.couleur">
+      <i [class]="identite.icone"></i>
+    </div>
+    <div>
+      <h1>{{ identite.libelle }}</h1>
+      @if (sousTitre) {
+        <p>{{ sousTitre }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="en-tete-page__actions">
+    <ng-content />
+  </div>
+</header>

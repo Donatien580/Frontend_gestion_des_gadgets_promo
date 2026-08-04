@@ -1,0 +1,12 @@
+@if (segments().length) {
+  <nav class="fil-ariane" aria-label="Fil d'Ariane">
+    @for (segment of segments(); track segment.libelle; let dernier = $last) {
+      @if (segment.route && !dernier) {
+        <a [routerLink]="segment.route" class="fil-ariane__lien">{{ segment.libelle }}</a>
+        <i class="pi pi-angle-right fil-ariane__separateur"></i>
+      } @else {
+        <span class="fil-ariane__actuel">{{ segment.libelle }}</span>
+      }
+    }
+  </nav>
+}

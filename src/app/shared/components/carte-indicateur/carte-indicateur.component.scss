@@ -1,0 +1,57 @@
+.carte-indicateur {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.carte-indicateur__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.carte-indicateur--primary .carte-indicateur__icone { background: var(--color-primary-50); color: var(--color-primary-600); }
+.carte-indicateur--success .carte-indicateur__icone { background: #e7f8f1; color: var(--color-success); }
+.carte-indicateur--warning .carte-indicateur__icone { background: #fdf3e2; color: var(--color-warning); }
+.carte-indicateur--danger  .carte-indicateur__icone { background: #fbe9e8; color: var(--color-danger); }
+
+.carte-indicateur__corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.carte-indicateur__libelle {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.carte-indicateur__valeur {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.carte-indicateur__tendance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-micro);
+  font-weight: 600;
+  margin-top: var(--space-1);
+
+  &--hausse { color: var(--color-success); }
+  &--baisse { color: var(--color-danger); }
+  &--neutre { color: var(--color-text-muted); }
+}

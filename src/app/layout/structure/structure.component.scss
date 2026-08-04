@@ -1,0 +1,28 @@
+.structure {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.structure__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.structure__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-8) var(--grid-margin-desktop);
+  background: var(--color-surface-50);
+
+  @media (max-width: 1279px) {
+    padding: var(--space-6) var(--grid-margin-tablet);
+  }
+
+  @media (max-width: 767px) {
+    padding: var(--space-4) var(--grid-margin-mobile);
+  }
+}

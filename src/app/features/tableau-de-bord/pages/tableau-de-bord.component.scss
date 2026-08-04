@@ -1,0 +1,199 @@
+.tableau-de-bord {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 1280px;
+}
+
+.tableau-de-bord__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  h1 { margin-bottom: var(--space-1); }
+  p { margin: 0; }
+}
+
+.tableau-de-bord__astuce {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-3);
+  border-radius: 999px;
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-micro);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+// --- Liste de widgets réorganisables ---
+.widgets-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.widget {
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+.widget__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.widget__entete-titre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: grab;
+
+  h2 { margin: 0; }
+
+  i:not(.widget__poignee) {
+    color: var(--color-primary-500);
+    font-size: 16px;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.widget__poignee {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+// --- États du glisser-déposer (Angular CDK) ---
+.cdk-drag-preview {
+  box-shadow: var(--shadow-elevated);
+  border-radius: var(--radius-lg);
+  opacity: 0.95;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  border: 2px dashed var(--color-primary-300);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-50);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.widgets-liste.cdk-drop-list-dragging .widget:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// --- Widget "Indicateurs clés" ---
+.widget-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+
+  @media (max-width: 1279px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// --- Widget "Accès rapides" (identité colorée par module) ---
+.widget-raccourcis {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-3);
+
+  @media (max-width: 1023px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.raccourci {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-surface-200);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    text-decoration: none;
+    border-color: var(--couleur-module);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+  }
+}
+
+.raccourci__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--couleur-module) 12%, white);
+  color: var(--couleur-module);
+  font-size: 18px;
+}
+
+// --- Widget "Alertes seuil de stock" ---
+.liste-alertes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.liste-alertes__info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-small);
+}
+
+.liste-alertes__libelle {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.liste-alertes__detail {
+  color: var(--color-text-muted);
+}
+
+.liste-alertes__barre {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-surface-100);
+  overflow: hidden;
+}
+
+.liste-alertes__barre-remplie {
+  height: 100%;
+  background: var(--color-danger);
+  border-radius: 999px;
+}

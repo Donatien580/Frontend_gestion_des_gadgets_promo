@@ -1,0 +1,130 @@
+// ============================================================================
+// Design tokens — source unique de vérité pour PrimeNG + composants
+// maison. Grille de Müller-Brockmann : unité de base 8px, échelle 4-8-12-16-
+// 24-32-48-64-96. Ne jamais coder une couleur/un espacement en dur ailleurs.
+// ============================================================================
+
+:root {
+  // --- Couleur primaire : bleu ciel institutionnel (menu latéral, actions) ---
+  --color-primary-50:  #eef7ff;
+  --color-primary-100: #d9edff;
+  --color-primary-200: #b8dfff;
+  --color-primary-300: #86caff;
+  --color-primary-400: #4bacff;
+  --color-primary-500: #1f8ef5;   // couleur primaire de référence
+  --color-primary-600: #1170d1;
+  --color-primary-700: #0f5aab;
+  --color-primary-800: #124a89;
+  --color-primary-900: #133f70;
+
+  // --- Accent : corail doux, réservé aux mises en avant ponctuelles ---
+  --color-accent-500: #ff6b5b;
+
+  // --- Neutres ---
+  --color-surface-0:   #ffffff;
+  --color-surface-50:  #f6f8fb;
+  --color-surface-100: #eef1f6;
+  --color-surface-200: #e1e6ed;
+  --color-surface-300: #c7cedb;
+  --color-text-primary:   #16233a;
+  --color-text-secondary: #5b6b84;
+  --color-text-muted:      #93a1b6;
+
+  // --- Sémantiques ---
+  --color-success: #1ea672;
+  --color-warning: #e8960c;
+  --color-danger:  #e0483e;
+  --color-info:    #1f8ef5;
+
+  // --- Typographie ---
+  --font-heading: 'Sora', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-body: 16px;
+  --font-size-small: 14px;
+  --font-size-micro: 12px;
+
+  // --- Espacements (multiples de 8px) ---
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  // --- Rayons de bordure (2 valeurs max) ---
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+
+  // --- Grille (Müller-Brockmann) ---
+  --grid-margin-desktop: 64px;
+  --grid-gutter-desktop: 24px;
+  --grid-margin-tablet: 32px;
+  --grid-gutter-tablet: 16px;
+  --grid-margin-mobile: 16px;
+  --grid-gutter-mobile: 12px;
+
+  // --- Layout applicatif ---
+  --sidebar-width: 264px;
+  --sidebar-width-collapsed: 76px;
+  --header-height: 72px;
+  --footer-height: 56px;
+
+  // --- Ombres douces, cohérentes ---
+  --shadow-card: 0 1px 2px rgba(22, 35, 58, 0.06), 0 4px 16px rgba(22, 35, 58, 0.06);
+  --shadow-elevated: 0 8px 24px rgba(22, 35, 58, 0.12);
+}
+
+// ============================================================================
+// Variantes de thème — sélectionnées via ThemeService (attribut [data-theme]
+// posé sur <html>). Seule la palette --color-primary-* change ; les neutres,
+// la typographie et les espacements restent identiques dans tous les thèmes.
+// Le thème par défaut ("bleu") est celui déjà défini dans :root ci-dessus.
+// ============================================================================
+
+[data-theme='violet'] {
+  --color-primary-50:  #f5f2ff;
+  --color-primary-100: #ebe4ff;
+  --color-primary-200: #d3c2ff;
+  --color-primary-300: #b294ff;
+  --color-primary-400: #9466f7;
+  --color-primary-500: #7c5cfc;
+  --color-primary-600: #6339e0;
+  --color-primary-700: #4f2bb8;
+  --color-primary-800: #3f2494;
+  --color-primary-900: #331e79;
+  --color-info: #7c5cfc;
+}
+
+[data-theme='emeraude'] {
+  --color-primary-50:  #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+  --color-info: #10b981;
+}
+
+[data-theme='corail'] {
+  --color-primary-50:  #fff2ee;
+  --color-primary-100: #ffe1d6;
+  --color-primary-200: #ffc0a8;
+  --color-primary-300: #ff9a75;
+  --color-primary-400: #ff7d52;
+  --color-primary-500: #ff6b4a;
+  --color-primary-600: #e5502f;
+  --color-primary-700: #c23e21;
+  --color-primary-800: #9c331d;
+  --color-primary-900: #7f2c1a;
+  --color-info: #ff6b4a;
+}

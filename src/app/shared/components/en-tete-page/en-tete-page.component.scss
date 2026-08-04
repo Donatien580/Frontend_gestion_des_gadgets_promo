@@ -1,0 +1,33 @@
+.en-tete-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.en-tete-page__titre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  h1 { margin-bottom: 2px; }
+  p { margin: 0; }
+}
+
+.en-tete-page__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.en-tete-page__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

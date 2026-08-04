@@ -1,0 +1,27 @@
+.fil-ariane {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-small);
+}
+
+.fil-ariane__lien {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+
+  &:hover {
+    color: var(--color-primary-600);
+    text-decoration: underline;
+  }
+}
+
+.fil-ariane__separateur {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.fil-ariane__actuel {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}

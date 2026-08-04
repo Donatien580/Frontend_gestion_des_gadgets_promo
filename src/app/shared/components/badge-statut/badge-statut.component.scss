@@ -1,0 +1,15 @@
+.badge-statut {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  font-size: var(--font-size-micro);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ton-succes    { background: #e7f8f1; color: var(--color-success); }
+.ton-attention { background: #fdf3e2; color: var(--color-warning); }
+.ton-danger    { background: #fbe9e8; color: var(--color-danger); }
+.ton-info      { background: var(--color-primary-50); color: var(--color-primary-600); }
+.ton-neutre    { background: var(--color-surface-100); color: var(--color-text-secondary); }

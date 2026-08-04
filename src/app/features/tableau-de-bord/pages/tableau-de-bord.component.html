@@ -1,0 +1,130 @@
+<div class="tableau-de-bord">
+  <header class="tableau-de-bord__entete">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p>Vue d'ensemble de l'activité de gestion des gadgets promotionnels.</p>
+    </div>
+    <span class="tableau-de-bord__astuce">
+      <i class="pi pi-arrows-alt"></i>
+      Glissez un widget par sa poignée pour réorganiser la page
+    </span>
+  </header>
+
+  <div class="widgets-liste" cdkDropList (cdkDropListDropped)="deposerWidget($event)">
+    @for (idWidget of ordreWidgets(); track idWidget) {
+      <section class="widget" cdkDrag>
+        <div class="widget__entete">
+          <div class="widget__entete-titre" cdkDragHandle>
+            <i class="pi pi-arrows-alt widget__poignee"></i>
+            <i [class]="definitionsWidgets[idWidget].icone"></i>
+            <h2>{{ definitionsWidgets[idWidget].titre }}</h2>
+          </div>
+
+          @if (idWidget === 'demandes') {
+            <a routerLink="/demandes" class="panneau__lien">Voir tout</a>
+          }
+          @if (idWidget === 'alertes') {
+            <a routerLink="/catalogue" class="panneau__lien">Voir le catalogue</a>
+          }
+        </div>
+
+        <div class="widget__corps">
+          @switch (idWidget) {
+            @case ('kpis') {
+              <div class="widget-kpis">
+                <app-carte-indicateur
+                  libelle="Références actives"
+                  valeur="128"
+                  icone="pi pi-box"
+                  accent="primary"
+                  tendance="hausse"
+                  libelleTendance="+6 ce mois-ci"
+                />
+                <app-carte-indicateur
+                  libelle="Demandes en attente"
+                  valeur="14"
+                  icone="pi pi-inbox"
+                  accent="warning"
+                  tendance="neutre"
+                  libelleTendance="Dont 3 urgentes"
+                />
+                <app-carte-indicateur
+                  libelle="Distributions ce mois"
+                  valeur="37"
+                  icone="pi pi-send"
+                  accent="success"
+                  tendance="hausse"
+                  libelleTendance="+12% vs mois dernier"
+                />
+                <app-carte-indicateur
+                  libelle="Alertes seuil de stock"
+                  valeur="3"
+                  icone="pi pi-exclamation-triangle"
+                  accent="danger"
+                  tendance="baisse"
+                  libelleTendance="-2 vs semaine dernière"
+                />
+              </div>
+            }
+
+            @case ('raccourcis') {
+              <div class="widget-raccourcis">
+                @for (module of modulesRaccourcis; track module.id) {
+                  <a
+                    class="raccourci"
+                    [routerLink]="module.route"
+                    [style.--couleur-module]="module.couleur"
+                  >
+                    <span class="raccourci__icone">
+                      <i [class]="module.icone"></i>
+                    </span>
+                    {{ module.libelle }}
+                  </a>
+                }
+              </div>
+            }
+
+            @case ('demandes') {
+              <table class="tableau">
+                <thead>
+                  <tr>
+                    <th>Numéro</th>
+                    <th>Objet</th>
+                    <th>Type</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (demande of demandesRecentes; track demande.numero) {
+                    <tr>
+                      <td class="tableau__cellule-forte">{{ demande.numero }}</td>
+                      <td>{{ demande.objet }}</td>
+                      <td>{{ demande.type }}</td>
+                      <td><app-badge-statut [etat]="demande.etat" /></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+
+            @case ('alertes') {
+              <ul class="liste-alertes">
+                @for (alerte of alertesStock; track alerte.libelle) {
+                  <li class="liste-alertes__item">
+                    <div class="liste-alertes__info">
+                      <span class="liste-alertes__libelle">{{ alerte.libelle }}</span>
+                      <span class="liste-alertes__detail">{{ alerte.quantite }} restants (seuil : {{ alerte.seuil }})</span>
+                    </div>
+                    <div class="liste-alertes__barre">
+                      <div class="liste-alertes__barre-remplie" [style.width.%]="(alerte.quantite / alerte.seuil) * 100"></div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          }
+        </div>
+      </section>
+    }
+  </div>
+</div>

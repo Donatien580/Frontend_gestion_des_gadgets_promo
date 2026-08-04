@@ -1,0 +1,12 @@
+<div class="etat-vide">
+  <div class="etat-vide__icone">
+    <i [class]="icone"></i>
+  </div>
+  <h3 class="etat-vide__titre">{{ titre }}</h3>
+  @if (message) {
+    <p class="etat-vide__message">{{ message }}</p>
+  }
+  @if (libelleAction) {
+    <button type="button" class="etat-vide__action">{{ libelleAction }}</button>
+  }
+</div>

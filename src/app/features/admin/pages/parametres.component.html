@@ -1,0 +1,59 @@
+<div class="page">
+  <app-en-tete-page module="admin" sousTitre="Configuration générale de l'application.">
+    <button type="button" class="bouton-primaire" (click)="enregistrer()">
+      <i class="pi pi-check"></i>
+      Enregistrer
+    </button>
+  </app-en-tete-page>
+
+  <div class="parametres-grille">
+    <section class="panneau">
+      <div class="panneau__entete">
+        <h2>Apparence</h2>
+      </div>
+      <p class="parametres-description">
+        Couleur d'accent utilisée dans le menu, l'en-tête et les composants de l'application.
+      </p>
+      <div class="choix-theme">
+        @for (theme of themeService.themes; track theme.id) {
+          <button
+            type="button"
+            class="choix-theme__option"
+            [class.choix-theme__option--actif]="theme.id === themeService.themeActuel()"
+            (click)="themeService.definirTheme(theme.id)"
+          >
+            <span class="choix-theme__pastille" [style.background]="theme.couleurApercu"></span>
+            {{ theme.libelle }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="panneau">
+      <div class="panneau__entete">
+        <h2>Stock &amp; alertes</h2>
+      </div>
+      <div class="champ">
+        <label for="seuil">Seuil d'alerte par défaut</label>
+        <input id="seuil" type="number" min="0" [(ngModel)]="seuilAlerteDefaut" />
+        <span class="champ__aide">Appliqué aux nouveaux gadgets du catalogue, modifiable par article.</span>
+      </div>
+    </section>
+
+    <section class="panneau">
+      <div class="panneau__entete">
+        <h2>Notifications par e-mail</h2>
+      </div>
+      <div class="champ">
+        <label for="email-expediteur">Adresse d'envoi</label>
+        <input id="email-expediteur" type="email" [(ngModel)]="emailExpediteur" />
+        <span class="champ__aide">Utilisée pour les notifications de demande et les alertes de seuil (SMTP Gmail).</span>
+      </div>
+      <label class="interrupteur">
+        <input type="checkbox" [(ngModel)]="notificationsActives" />
+        <span class="interrupteur__glissiere"></span>
+        Activer l'envoi des notifications
+      </label>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="selecteur-theme">
+  <button
+    type="button"
+    class="selecteur-theme__bouton"
+    (click)="basculerPanneau()"
+    aria-label="Changer le thème de couleur"
+  >
+    <i class="pi pi-palette"></i>
+  </button>
+
+  @if (ouvert()) {
+    <div class="selecteur-theme__panneau">
+      <span class="selecteur-theme__titre">Thème de couleur</span>
+
+      @for (theme of themeService.themes; track theme.id) {
+        <button
+          type="button"
+          class="selecteur-theme__option"
+          [class.selecteur-theme__option--actif]="theme.id === themeService.themeActuel()"
+          (click)="choisir(theme.id)"
+        >
+          <span class="selecteur-theme__pastille" [style.background]="theme.couleurApercu"></span>
+          <span class="selecteur-theme__libelle">{{ theme.libelle }}</span>
+          @if (theme.id === themeService.themeActuel()) {
+            <i class="pi pi-check selecteur-theme__coche"></i>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

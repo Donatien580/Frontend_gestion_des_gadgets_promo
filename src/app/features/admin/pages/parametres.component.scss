@@ -1,0 +1,119 @@
+.parametres-grille {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  max-width: 960px;
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.parametres-description {
+  font-size: var(--font-size-small);
+  margin-bottom: var(--space-4);
+}
+
+.choix-theme {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.choix-theme__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-surface-200);
+  background: var(--color-surface-0);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+
+  &--actif {
+    border-color: var(--color-primary-400);
+    background: var(--color-primary-50);
+    font-weight: 600;
+  }
+}
+
+.choix-theme__pastille {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+
+  label {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  input {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-surface-200);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-small);
+    color: var(--color-text-primary);
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary-400);
+    }
+  }
+}
+
+.champ__aide {
+  font-size: var(--font-size-micro);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.interrupteur {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+}
+
+.interrupteur__glissiere {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-surface-200);
+  transition: background-color 0.15s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-surface-0);
+    transition: transform 0.15s ease;
+  }
+}
+
+.interrupteur input:checked + .interrupteur__glissiere {
+  background: var(--color-primary-500);
+
+  &::after {
+    transform: translateX(16px);
+  }
+}

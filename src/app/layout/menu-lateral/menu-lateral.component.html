@@ -1,0 +1,42 @@
+<aside class="menu-lateral" [class.menu-lateral--collapsed]="reduit">
+  <div class="menu-lateral__brand">
+    <div class="menu-lateral__logo">
+      <i class="pi pi-box"></i>
+    </div>
+    @if (!reduit) {
+      <div class="menu-lateral__brand-text">
+        <span class="menu-lateral__brand-title">Gadgets DCM</span>
+        <span class="menu-lateral__brand-subtitle">Gestion &amp; distribution</span>
+      </div>
+    }
+  </div>
+
+  <nav class="menu-lateral__nav scrollbar-slim">
+    @for (groupe of groupesMenu; track groupe.titre) {
+      @if (groupe.titre && !reduit) {
+        <span class="menu-lateral__groupe-titre">{{ groupe.titre }}</span>
+      }
+      @if (groupe.titre && reduit) {
+        <div class="menu-lateral__groupe-separateur"></div>
+      }
+
+      @for (element of groupe.elements; track element.route) {
+        <a
+          class="menu-lateral__link"
+          [routerLink]="element.route"
+          routerLinkActive="menu-lateral__link--active"
+          [title]="reduit ? element.libelle : ''"
+        >
+          <i class="menu-lateral__icone" [class]="element.icone"></i>
+          @if (!reduit) {
+            <span class="menu-lateral__label">{{ element.libelle }}</span>
+          }
+        </a>
+      }
+    }
+  </nav>
+
+  <button class="menu-lateral__toggle" type="button" (click)="basculer()" aria-label="Réduire le menu">
+    <i class="pi" [class.pi-angle-left]="!reduit" [class.pi-angle-right]="reduit"></i>
+  </button>
+</aside>
