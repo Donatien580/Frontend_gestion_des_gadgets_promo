@@ -1,0 +1,208 @@
+// ============================================================================
+// Classes communes aux pages "liste" et aux écrans d'administration.
+// Définies globalement (et non dans un composant) car partagées par des
+// composants indépendants : tableau de bord, catalogue, admin, etc.
+// ============================================================================
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 1280px;
+}
+
+.page__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+
+  h1 { margin-bottom: var(--space-1); }
+  p { margin: 0; }
+}
+
+// --- Panneau générique (conteneur de section) ---
+.panneau {
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+.panneau__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+
+  h2 { margin: 0; }
+}
+
+.panneau__lien {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+
+// --- Tableau générique ---
+.tableau {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    font-size: var(--font-size-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    padding: var(--space-2) var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-surface-200);
+  }
+
+  td {
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px solid var(--color-surface-100);
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.tableau__cellule-forte {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.tableau__utilisateur {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.tableau__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.tableau__actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+// --- Boutons ---
+.bouton-primaire {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary-500);
+  color: var(--color-surface-0);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover { background: var(--color-primary-600); }
+  &:focus-visible { outline: 2px solid var(--color-primary-700); outline-offset: 2px; }
+}
+
+.bouton-secondaire {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface-0);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover { background: var(--color-surface-50); }
+}
+
+.bouton-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-danger);
+  color: var(--color-surface-0);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover { background: color-mix(in srgb, var(--color-danger) 85%, black); }
+  &:focus-visible { outline: 2px solid var(--color-danger); outline-offset: 2px; }
+}
+
+// --- Boutons d'action des tableaux : une couleur par intention, visible en
+// permanence (pas seulement au survol). Défaut = gris neutre (bascules
+// d'état, actions secondaires). --voir (bleu), --modifier (orange) et
+// --supprimer (rouge) selon l'action portée.
+.bouton-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--color-surface-100);
+  }
+
+  &--voir {
+    color: var(--color-primary-500);
+
+    &:hover {
+      background: var(--color-primary-50);
+      color: var(--color-primary-600);
+    }
+  }
+
+  &--modifier {
+    color: var(--color-warning);
+
+    &:hover {
+      background: #fdf3e2;
+    }
+  }
+
+  &--supprimer {
+    color: var(--color-danger);
+
+    &:hover {
+      background: #fbe9e8;
+    }
+  }
+}

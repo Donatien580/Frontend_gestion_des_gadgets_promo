@@ -1,0 +1,7 @@
+@use './styles/tokens';
+@use './styles/base';
+@use './styles/composants-communs';
+
+// Le thème PrimeNG (providePrimeNG) est configuré en TypeScript dans
+// app.config.ts, à partir des mêmes tokens CSS définis dans _tokens.scss,
+// pour garantir un rendu visuel unifié avec le reste de l'application.

@@ -1,0 +1,59 @@
+<form [formGroup]="formulaire" (ngSubmit)="enregistrer()" class="formulaire">
+  <div class="champ">
+    <label for="libelleService">Libellé *</label>
+    <input id="libelleService" type="text" formControlName="libelleService" />
+    @if (
+      formulaire.get("libelleService")?.invalid &&
+      formulaire.get("libelleService")?.touched
+    ) {
+      <small class="erreur">Champ obligatoire</small>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="codeService">Code *</label>
+    <input id="codeService" type="text" formControlName="codeService" />
+    @if (
+      formulaire.get("codeService")?.invalid &&
+      formulaire.get("codeService")?.touched
+    ) {
+      <small class="erreur">Champ obligatoire</small>
+    }
+  </div>
+
+  <div class="formulaire__ligne">
+    <div class="champ">
+      <label for="matriculeResponsable">Matricule responsable</label>
+      <input
+        id="matriculeResponsable"
+        type="text"
+        formControlName="matriculeResponsable" />
+    </div>
+    <div class="champ">
+      <label for="nomResponsable">Nom responsable</label>
+      <input id="nomResponsable" type="text" formControlName="nomResponsable" />
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="telephoneResponsable">Téléphone responsable</label>
+    <input
+      id="telephoneResponsable"
+      type="text"
+      formControlName="telephoneResponsable" />
+  </div>
+
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
+      <i class="pi pi-times"></i> Annuler
+    </button>
+    <button type="submit" class="bouton-primaire" [disabled]="enregistrement">
+      @if (enregistrement) {
+        <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+        <i class="pi pi-save"></i>
+      }
+      Enregistrer
+    </button>
+  </div>
+</form>

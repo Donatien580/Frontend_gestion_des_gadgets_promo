@@ -1,0 +1,18 @@
+<div class="app-layout">
+  <p-drawer
+    [(visible)]="drawerVisible"
+    [modal]="false"
+    [dismissible]="false"
+    position="left"
+    styleClass="app-sidebar">
+    <app-menu-lateral />
+  </p-drawer>
+
+  <main class="app-main">
+    <app-en-tete [(drawerVisible)]="drawerVisible" />
+
+    <div class="app-content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

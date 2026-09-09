@@ -1,0 +1,27 @@
+.app-layout {
+  height: 100vh;
+  overflow: hidden;
+
+  // PrimeNG gère le décalage du contenu quand le sidebar se réduit.
+  // On peut ajuster les marges internes si besoin.
+  .app-content {
+    padding: 1rem;
+    height: calc(
+      100vh - var(--header-height, 56px)
+    ); // ajustez selon votre header
+    overflow-y: auto;
+    background: var(--surface-ground);
+  }
+}
+
+// Surcharge légère du style du sidebar pour réduire la taille des polices
+:host ::ng-deep {
+  .p-sidebar {
+    .p-sidebar-content {
+      padding: 0.5rem;
+    }
+    .p-sidebar-header {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}

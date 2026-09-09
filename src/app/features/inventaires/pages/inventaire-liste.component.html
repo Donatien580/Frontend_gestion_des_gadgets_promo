@@ -1,0 +1,150 @@
+<div class="inventaire-page">
+  <div class="inventaire-page__breadcrumb">
+    <p-breadcrumb [model]="items"></p-breadcrumb>
+  </div>
+
+  <p-card styleClass="inventaire-card">
+    <div class="inventaire-page__header">
+      <div class="inventaire-page__left">
+        <h2 class="inventaire-page__title">Inventaires</h2>
+        <button
+          type="button"
+          class="bouton-primaire"
+          (click)="openModalCreate()">
+          <i class="pi pi-plus"></i>
+          Nouvel inventaire
+        </button>
+      </div>
+      <div class="inventaire-page__actions">
+        <div class="inventaire-page__search">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            [ngModel]="recherche"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Rechercher un inventaire..." />
+          @if (isSearching) {
+            <i
+              class="pi pi-spin pi-spinner inventaire-page__search-spinner"></i>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="inventaire-page__table">
+      <p-table
+        [value]="inventaires"
+        [paginator]="true"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [loading]="isLoading"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}"
+        responsiveLayout="scroll"
+        styleClass="inventaire-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Lignes</th>
+            <th>Écarts</th>
+            <th>État</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-inventaire let-rowIndex="rowIndex">
+          <tr>
+            <td class="tableau__cellule-forte">
+              {{ inventaire.dateInventaire | date: "dd/MM/yyyy" }}
+            </td>
+            <td>{{ inventaire.typeInventaire }}</td>
+            <td>{{ inventaire.lignes.length }} gadget(s)</td>
+            <td>
+              @if (nombreEcarts(inventaire) > 0) {
+                <span class="etiquette-alerte">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ nombreEcarts(inventaire) }} écart(s)
+                </span>
+              } @else {
+                <span class="etiquette-ok">
+                  <i class="pi pi-check-circle"></i>
+                  Aucun écart
+                </span>
+              }
+            </td>
+            <td>
+              <span [class]="getEtatClasse(inventaire)">
+                {{ getEtatLibelle(inventaire) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  pTooltip="Afficher"
+                  tooltipPosition="top"
+                  (onClick)="openModalDetail(inventaire)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="empty-message">
+              <div class="empty-message__content">
+                <div class="empty-message__icon">
+                  <i class="pi pi-inbox"></i>
+                </div>
+                <strong>Aucun inventaire trouvé</strong>
+                <span>Commencez par créer un nouvel inventaire.</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog
+      header="Créer un nouvel inventaire"
+      [(visible)]="createDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '550px' }">
+      <app-inventaire-formulaire
+        (annuler)="closeCreateDialog()"
+        (enregistre)="onInventaireSaved()">
+      </app-inventaire-formulaire>
+    </p-dialog>
+
+    <p-dialog
+      header="Détails de l'inventaire"
+      [(visible)]="detailDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '850px' }">
+      <app-inventaire-detail
+        [inventaire]="inventaireSelectionne"
+        (modifie)="onInventaireModifie()">
+      </app-inventaire-detail>
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Fermer"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="closeDetailDialog()">
+        </p-button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+</div>

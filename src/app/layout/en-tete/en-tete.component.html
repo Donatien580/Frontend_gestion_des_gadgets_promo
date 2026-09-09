@@ -1,0 +1,28 @@
+<header class="app-en-tete">
+  <div class="app-en-tete__actions">
+    <!-- <app-selecteur-theme /> -->
+
+    <button
+      class="app-en-tete__icon-btn"
+      type="button"
+      aria-label="Notifications">
+      <i class="pi pi-bell"></i>
+      <span class="app-en-tete__badge">3</span>
+    </button>
+
+    <div class="app-en-tete__divider"></div>
+
+    <div class="app-en-tete__profile">
+      <div class="app-en-tete__avatar">{{ utilisateurCourant.initiales }}</div>
+      <div class="app-en-tete__profile-text">
+        <span class="app-en-tete__profile-name">{{
+          utilisateurCourant.nomComplet
+        }}</span>
+        <span class="app-en-tete__profile-role">{{
+          utilisateurCourant.role
+        }}</span>
+      </div>
+      <i class="pi pi-angle-down"></i>
+    </div>
+  </div>
+</header>

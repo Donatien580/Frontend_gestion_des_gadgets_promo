@@ -1,0 +1,18 @@
+@if (personnel) {
+  <div class="detail-personnel">
+    <div class="detail-personnel__header">
+      <h3>{{ personnel.nom }} {{ personnel.prenom }}</h3>
+      <span
+        class="statut-actif"
+        [class]="personnel.actif ? 'statut-actif-oui' : 'statut-actif-non'">
+        {{ personnel.actif ? "Actif" : "Inactif" }}
+      </span>
+    </div>
+    <div class="detail-personnel__corps">
+      <p><strong>Matricule :</strong> {{ personnel.matricule || "—" }}</p>
+      <p><strong>Téléphone :</strong> {{ personnel.telephone || "—" }}</p>
+      <p><strong>Fonction :</strong> {{ personnel.fonction || "—" }}</p>
+      <p><strong>Service :</strong> {{ personnel.libelleService || "—" }}</p>
+    </div>
+  </div>
+}

@@ -1,0 +1,39 @@
+@if (ouverte) {
+  <div class="modale-fond" (click)="fermer()">
+    <div
+      class="modale"
+      [class]="'modale--' + taille"
+      [class.modale--agrandie]="agrandie()"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+    >
+      <header class="modale__entete">
+        <h2>{{ titre }}</h2>
+        <div class="modale__entete-actions">
+          @if (agrandissable) {
+            <button
+              type="button"
+              class="modale__bouton-action"
+              (click)="basculerAgrandissement()"
+              [attr.aria-label]="agrandie() ? 'Réduire' : 'Agrandir'"
+            >
+              <i class="pi" [class.pi-window-maximize]="!agrandie()" [class.pi-window-minimize]="agrandie()"></i>
+            </button>
+          }
+          <button type="button" class="modale__bouton-action" (click)="fermer()" aria-label="Fermer">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="modale__corps scrollbar-slim">
+        <ng-content />
+      </div>
+
+      <footer class="modale__pied">
+        <ng-content select="[piedModale]" />
+      </footer>
+    </div>
+  </div>
+}

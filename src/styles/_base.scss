@@ -1,0 +1,97 @@
+// ============================================================================
+// Reset minimal + styles de base — corps de texte, titres, focus clavier.
+// ============================================================================
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-50);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
+}
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 600;
+}
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 var(--space-4) 0;
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-primary-600);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Accessibilité clavier : ne jamais supprimer un focus sans le remplacer.
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+// Grille modulaire réutilisable pour les conteneurs de page.
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gutter-desktop);
+  padding: 0 var(--grid-margin-desktop);
+
+  @media (max-width: 1279px) {
+    grid-template-columns: repeat(8, 1fr);
+    gap: var(--grid-gutter-tablet);
+    padding: 0 var(--grid-margin-tablet);
+  }
+
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter-mobile);
+    padding: 0 var(--grid-margin-mobile);
+  }
+}
+
+// .scrollbar-slim {
+//   &::-webkit-scrollbar {
+//     width: 6px;
+//     height: 6px;
+//   }
+//   &::-webkit-scrollbar-thumb {
+//     background: var(--color-surface-300);
+//     border-radius: var(--radius-sm);
+//   }
+// }

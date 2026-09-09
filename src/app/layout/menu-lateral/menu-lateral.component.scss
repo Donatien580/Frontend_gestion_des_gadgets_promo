@@ -1,0 +1,289 @@
+.menu-lateral {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-min-width);
+  height: 100vh;
+  flex-shrink: 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
+  color: var(--color-surface-0);
+  transition: width 0.2s ease;
+  overflow: hidden;
+
+  &--collapsed {
+    width: var(--sidebar-min-width-collapsed);
+  }
+}
+
+.menu-lateral__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--header-height);
+  padding: 0 var(--space-4);
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.menu-lateral__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  //border-radius: var(--radius-sm);
+  //overflow: hidden;
+  flex-shrink: 0;
+}
+
+.menu-lateral__logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.menu-lateral__brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.menu-lateral__brand-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.menu-lateral__brand-subtitle {
+  font-size: var(--font-size-micro);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.2;
+}
+
+.menu-lateral__nav {
+  flex: 1;
+  overflow-y: auto;
+  //padding: var(--space-2) var(--space-2);
+  //display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.menu-lateral__groupe-titre {
+  display: block;
+  padding: var(--space-4) var(--space-3) var(--space-1);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.menu-lateral__groupe-separateur {
+  height: 1px;
+  margin: var(--space-3) var(--space-2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.menu-lateral__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  width: calc(100% - var(--space-4));
+
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-surface-0);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-surface-0);
+    outline-offset: -2px;
+  }
+
+  &--active {
+    // background: var(--color-surface-0);
+    color: rgb(242, 194, 63);
+    //font-weight: 500;
+
+    .menu-lateral__icone {
+      color: var(--color-primary-600);
+    }
+  }
+}
+.menu-lateral__icone {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.menu-lateral__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-surface-0);
+  }
+}
+
+.app-en-tete__logo {
+  display: flex;
+  align-items: center;
+  height: 40px;
+
+  img {
+    height: 70%;
+    width: auto;
+    object-fit: contain;
+  }
+
+  i {
+    font-size: 44px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* ========================================
+   MENU PARENT
+   ======================================== */
+
+.menu-lateral__link--parent {
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.menu-lateral__link--parent:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-surface-0);
+}
+
+.menu-lateral__link--open {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ========================================
+   CHEVRON
+   ======================================== */
+
+.menu-lateral__chevron {
+  margin-left: auto;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+
+  transition: transform 0.2s ease;
+}
+
+/* ========================================
+   SOUS-MENU
+   ======================================== */
+
+.menu-lateral__submenu {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: var(--space-4);
+  padding-left: var(--space-3);
+
+  //border-left: 1px solid rgba(255, 255, 255, 0.15);
+
+  animation: submenu-enter 0.2s ease;
+}
+
+/* ========================================
+   LIEN DU SOUS-MENU
+   ======================================== */
+
+.menu-lateral__sublink {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  padding: var(--space-2) var(--space-3);
+
+  border-radius: var(--radius-sm);
+
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: var(--font-size-small);
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.menu-lateral__sublink:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-surface-0);
+}
+
+.menu-lateral__sublink--active {
+  //background: rgba(255, 255, 255, 0.12);
+  color: var(--color-surface-0);
+  color: orange;
+}
+
+/* ========================================
+   ICÔNES SOUS-MENU
+   ======================================== */
+
+.menu-lateral__subicone {
+  width: 16px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   ANIMATION
+   ======================================== */
+
+@keyframes submenu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

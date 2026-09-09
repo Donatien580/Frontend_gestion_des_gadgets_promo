@@ -1,0 +1,21 @@
+<div class="page">
+  <app-en-tete-page module="admin" sousTitre="Chaque compte utilisateur se voit attribuer l'un de ces rôles." />
+
+  <div class="roles-grille">
+    @for (role of roles; track role.nom) {
+      <div class="fiche-role" [class]="'fiche-role--' + role.accent">
+        <div class="fiche-role__icone">
+          <i [class]="role.icone"></i>
+        </div>
+        <div class="fiche-role__corps">
+          <h3>{{ role.nom }}</h3>
+          <p>{{ role.description }}</p>
+          <span class="fiche-role__compteur">
+            <i class="pi pi-user"></i>
+            {{ role.nombreUtilisateurs }} utilisateur{{ role.nombreUtilisateurs > 1 ? 's' : '' }}
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

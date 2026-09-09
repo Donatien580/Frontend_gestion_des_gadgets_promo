@@ -1,0 +1,61 @@
+<form [formGroup]="formulaire" class="formulaire">
+  <div class="champ">
+    <label for="dateInventaire"> Date de l'inventaire * </label>
+
+    <input id="dateInventaire" type="date" formControlName="dateInventaire" />
+
+    @if (dateInventaire.invalid && dateInventaire.touched) {
+      <span class="champ__erreur"> La date est obligatoire. </span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="typeInventaire"> Type d'inventaire * </label>
+
+    <p-select
+      id="typeInventaire"
+      [options]="typesDisponibles"
+      optionLabel="label"
+      optionValue="value"
+      formControlName="typeInventaire"
+      placeholder="Sélectionner un type"
+      class="w-full"></p-select>
+
+    @if (typeInventaire.invalid && typeInventaire.touched) {
+      <span class="champ__erreur"> Le type est obligatoire. </span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="observations"> Observations </label>
+
+    <textarea
+      id="observations"
+      formControlName="observations"
+      rows="3"
+      placeholder="Remarques concernant cet inventaire...">
+    </textarea>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-annuler" (click)="annulerFormulaire()">
+      <i class="pi pi-times"></i>
+      Annuler
+    </button>
+
+    <button
+      type="button"
+      class="bouton-enregistrer"
+      [disabled]="enregistrement"
+      (click)="enregistrer()">
+      <i class="pi pi-check"></i>
+
+      @if (enregistrement) {
+        Enregistrement...
+      } @else {
+        Créer
+      }
+    </button>
+  </div>
+</form>

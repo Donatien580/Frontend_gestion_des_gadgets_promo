@@ -1,0 +1,173 @@
+@if (demande) {
+  <div class="detail-demande">
+    <!-- En-tête -->
+    <div class="detail-demande__header">
+      <h3>{{ demande.numeroDemande }}</h3>
+      <span class="statut-demande" [class]="getEtatClasse(demande.etat)">
+        {{ getEtatLibelle(demande.etat) }}
+      </span>
+    </div>
+
+    <!-- Informations principales -->
+    <div class="detail-demande__infos">
+      <div class="info-item"><strong>Objet :</strong> {{ demande.objet }}</div>
+      <div class="info-item">
+        <strong>Type :</strong> {{ demande.typeDemande }}
+      </div>
+      <div class="info-item">
+        <strong>Date demande :</strong>
+        {{ demande.dateDemande | date: "dd/MM/yyyy HH:mm" }}
+      </div>
+      @if (demande.dateSouhaitee) {
+        <div class="info-item">
+          <strong>Date souhaitée :</strong>
+          {{ demande.dateSouhaitee | date: "dd/MM/yyyy" }}
+        </div>
+      }
+      @if (demande.observations) {
+        <div class="info-item">
+          <strong>Observations :</strong> {{ demande.observations }}
+        </div>
+      }
+
+      @if (demande.typeDemande === "INTERNE") {
+        <div class="info-item">
+          <strong>Service :</strong> {{ demande.libelleService }}
+        </div>
+        <div class="info-item">
+          <strong>Matricule responsable :</strong>
+          {{ demande.matriculeResponsable || "—" }}
+        </div>
+        <div class="info-item">
+          <strong>Nom responsable :</strong> {{ demande.nomResponsable || "—" }}
+        </div>
+        <div class="info-item">
+          <strong>Personnels impactés :</strong>
+          {{ demande.nombrePersonnelsImpactes }}
+        </div>
+      } @else {
+        <div class="info-item">
+          <strong>Structure :</strong> {{ demande.structure }}
+        </div>
+        <div class="info-item">
+          <strong>Représentant :</strong> {{ demande.representant }}
+        </div>
+        @if (demande.telephone) {
+          <div class="info-item">
+            <strong>Téléphone :</strong> {{ demande.telephone }}
+          </div>
+        }
+      }
+
+      @if (demande.pieceJustificative) {
+        <div class="info-item piece-justificative">
+          <strong>Pièce justificative :</strong>
+          <a
+            [href]="getPieceUrl(demande.pieceJustificative.cheminFichier)"
+            target="_blank"
+            rel="noopener">
+            <i class="pi pi-file" style="margin-right: 0.5rem"></i>
+            {{ demande.pieceJustificative.nomFichier || "Voir le fichier" }}
+          </a>
+        </div>
+      }
+    </div>
+
+    <!-- Tableau des gadgets -->
+    <h4 class="table-title">Gadgets demandés</h4>
+    <div class="table-responsive">
+      <table class="table-lignes">
+        <thead>
+          <tr>
+            <th>Gadget</th>
+            <th>Quantité demandée</th>
+            <th>Quantité accordée</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ligne of demande.lignes; track ligne.idLigne) {
+            <tr>
+              <td>{{ ligne.libelleGadget }}</td>
+              <td>{{ ligne.quantiteDemandee }}</td>
+              <td>{{ ligne.quantiteAccordee ?? "—" }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Agent affecté et motif -->
+    @if (demande.nomAgentAffecte) {
+      <div class="info-item">
+        <strong>Agent affecté :</strong> {{ demande.nomAgentAffecte }}
+      </div>
+    }
+    @if (demande.motifRefus) {
+      <div class="info-item">
+        <strong>Motif de refus :</strong> {{ demande.motifRefus }}
+      </div>
+    }
+
+    <!-- Actions conditionnelles -->
+    @if (demande.etat === "EN_ATTENTE") {
+      <div class="detail-demande__actions">
+        <p-button
+          label="Affecter"
+          icon="pi pi-user-plus"
+          severity="info"
+          (onClick)="affecter()"></p-button>
+        <p-button
+          label="Valider"
+          icon="pi pi-check"
+          severity="success"
+          (onClick)="valider()"></p-button>
+        <p-button
+          label="Refuser"
+          icon="pi pi-times"
+          severity="danger"
+          (onClick)="ouvrirRefusDialog()"></p-button>
+      </div>
+    }
+    <!-- Pied de modale -->
+    <div class="detail-demande__footer">
+      <p-button
+        label="Fermer"
+        icon="pi pi-times"
+        severity="secondary"
+        (onClick)="fermer.emit()"></p-button>
+    </div>
+  </div>
+}
+
+<!-- Popup de refus -->
+<p-dialog
+  [(visible)]="refusDialogVisible"
+  header="Motif du refus"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '400px' }">
+  <div class="refus-dialog-contenu">
+    <label for="motifRefus">Veuillez indiquer le motif du refus *</label>
+    <textarea
+      id="motifRefus"
+      pInputTextarea
+      [(ngModel)]="motifRefus"
+      rows="3"
+      placeholder="Motif obligatoire"
+      class="refus-textarea"></textarea>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Annuler"
+      icon="pi pi-times"
+      severity="secondary"
+      (onClick)="fermerRefusDialog()"></p-button>
+    <p-button
+      label="Confirmer le refus"
+      icon="pi pi-check"
+      severity="danger"
+      [disabled]="!motifRefus.trim()"
+      (onClick)="confirmerRefus()"></p-button>
+  </ng-template>
+</p-dialog>

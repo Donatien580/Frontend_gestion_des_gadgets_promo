@@ -1,0 +1,18 @@
+@if (confirmationService.demande(); as demande) {
+  <app-modale [ouverte]="true" [titre]="demande.titre" taille="petite" (fermeture)="repondre(false)">
+    <p class="boite-confirmation__message">{{ demande.message }}</p>
+
+    <div piedModale>
+      <button type="button" class="bouton-secondaire" (click)="repondre(false)">
+        {{ demande.libelleAnnuler || 'Annuler' }}
+      </button>
+      <button
+        type="button"
+        [class]="demande.dangereux ? 'bouton-danger' : 'bouton-primaire'"
+        (click)="repondre(true)"
+      >
+        {{ demande.libelleConfirmer || 'Confirmer' }}
+      </button>
+    </div>
+  </app-modale>
+}

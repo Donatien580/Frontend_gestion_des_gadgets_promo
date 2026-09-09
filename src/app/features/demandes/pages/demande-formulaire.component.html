@@ -1,0 +1,178 @@
+<div [formGroup]="formulaire" class="formulaire">
+  <!-- Bascule type -->
+  <div class="bascule-type">
+    <button
+      type="button"
+      class="bascule-type__option"
+      [class.bascule-type__option--actif]="type === 'INTERNE'"
+      (click)="choisirType('INTERNE')">
+      <i class="pi pi-building"></i> Demande interne
+    </button>
+    <button
+      type="button"
+      class="bascule-type__option"
+      [class.bascule-type__option--actif]="type === 'EXTERNE'"
+      (click)="choisirType('EXTERNE')">
+      <i class="pi pi-globe"></i> Demande externe
+    </button>
+  </div>
+
+  <!-- Objet -->
+  <div class="champ">
+    <label for="objet">Objet *</label>
+    <input id="objet" type="text" formControlName="objet" />
+  </div>
+
+  <!-- Champs spécifiques selon le type -->
+  @if (type === "INTERNE") {
+    <div class="formulaire__ligne">
+      <div class="champ">
+        <label for="idService">Service demandeur *</label>
+        <select
+          id="idService"
+          formControlName="idService"
+          (change)="onServiceSelected($any($event.target).value)">
+          <option [ngValue]="null" disabled>Sélectionner un service…</option>
+          @for (service of servicesDisponibles; track service.idService) {
+            <option [ngValue]="service.idService">
+              {{ service.libelleService }}
+            </option>
+          }
+        </select>
+      </div>
+      <div class="champ">
+        <label>Responsable</label>
+        <input
+          type="text"
+          [value]="getNomResponsable(formulaire.get('idService')?.value)"
+          disabled />
+      </div>
+    </div>
+    <div class="champ champ--etroit">
+      <label for="nombrePersonnelsImpactes"
+        >Nombre de personnels impactés *</label
+      >
+      <input
+        id="nombrePersonnelsImpactes"
+        type="number"
+        min="1"
+        formControlName="nombrePersonnelsImpactes" />
+    </div>
+  } @else {
+    <div class="formulaire__ligne">
+      <div class="champ">
+        <label for="structure">Structure *</label>
+        <input id="structure" type="text" formControlName="structure" />
+      </div>
+      <div class="champ">
+        <label for="representant">Représentant *</label>
+        <input id="representant" type="text" formControlName="representant" />
+      </div>
+    </div>
+    <div class="champ champ--etroit">
+      <label for="telephone">Téléphone</label>
+      <input id="telephone" type="tel" formControlName="telephone" />
+    </div>
+  }
+
+  <!-- Observations -->
+  <div class="champ">
+    <label for="observations">Observations</label>
+    <textarea
+      id="observations"
+      formControlName="observations"
+      rows="2"></textarea>
+  </div>
+
+  <hr class="formulaire__separateur" />
+  <h3>Gadgets demandés</h3>
+
+  <!-- Lignes de demande -->
+  <div formArrayName="lignes" class="lignes-demande">
+    @for (ligne of lignes.controls; track ligne; let i = $index) {
+      <div class="ligne-demande" [formGroupName]="i">
+        <div class="champ">
+          <label>Catégorie</label>
+          <p-select
+            [options]="categoriesDisponibles"
+            optionLabel="libelle"
+            optionValue="idCategorie"
+            formControlName="idCategorieFiltre"
+            (onChange)="onCategorieChange(i, $event.value)"
+            placeholder="Tous les catégories"
+            [showClear]="true"
+            class="w-full"></p-select>
+        </div>
+        <div class="champ">
+          <label>Gadget *</label>
+          <p-select
+            [options]="gadgetsParLigne[i]"
+            optionLabel="libelle"
+            optionValue="idGadget"
+            formControlName="idGadget"
+            [filter]="true"
+            filterBy="libelle"
+            placeholder="Sélectionner une gadget"
+            class="w-full"></p-select>
+        </div>
+        <div class="champ champ--etroit">
+          <label>Quantité *</label>
+          <input type="number" min="1" formControlName="quantiteDemandee" />
+        </div>
+        <button
+          type="button"
+          class="bouton-icone bouton-icone--supprimer"
+          (click)="retirerLigne(i)"
+          [disabled]="lignes.length === 1"
+          aria-label="Retirer cette ligne">
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    }
+  </div>
+
+  <button type="button" class="bouton-secondaire" (click)="ajouterLigne()">
+    <i class="pi pi-plus"></i> Ajouter un gadget
+  </button>
+
+  <p-fieldset
+    legend="La pièce justificative est obligatoire*"
+    class="max-w-xs w-full">
+    <div class="formulaire__ligne">
+      <div class="champ champ--etroit">
+        <label for="dateSouhaitee">Date souhaitée</label>
+        <input id="dateSouhaitee" type="date" formControlName="dateSouhaitee" />
+      </div>
+      <div class="champ">
+        <label>Pièce justificative</label>
+        <label class="bouton-secondaire zone-fichier">
+          <i class="pi pi-paperclip"></i>
+          {{ nomFichierJustificatif || "Joindre un fichier" }}
+          <input
+            type="file"
+            class="zone-fichier__input"
+            (change)="surSelectionFichier($event)" />
+        </label>
+      </div>
+    </div>
+  </p-fieldset>
+
+  <!-- Actions -->
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
+      Annuler
+    </button>
+    <button
+      type="button"
+      class="bouton-primaire"
+      (click)="enregistrer()"
+      [disabled]="enregistrement">
+      @if (enregistrement) {
+        <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+        <i class="pi pi-save"></i>
+      }
+      Enregistrer
+    </button>
+  </div>
+</div>

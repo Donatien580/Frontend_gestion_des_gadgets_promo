@@ -1,0 +1,223 @@
+@if (inventaire) {
+  <div class="fiche">
+    <dl class="fiche-info">
+      <div>
+        <dt>Date</dt>
+        <dd>{{ inventaire.dateInventaire | date: "dd/MM/yyyy" }}</dd>
+      </div>
+
+      <div>
+        <dt>Type</dt>
+        <dd>{{ inventaire.typeInventaire }}</dd>
+      </div>
+
+      <div>
+        <dt>État</dt>
+        <dd>{{ inventaire.etat }}</dd>
+      </div>
+
+      <div>
+        <dt>Réalisé par</dt>
+        <dd>{{ inventaire.realisateur || "—" }}</dd>
+      </div>
+    </dl>
+
+    @if (inventaire.observations) {
+      <p class="fiche-observations">
+        {{ inventaire.observations }}
+      </p>
+    }
+  </div>
+
+  <!-- SAISIE D'UN NOUVEAU COMPTAGE -->
+  @if (enCours) {
+    <h3 class="fiche-sous-titre">Saisir un comptage</h3>
+
+    <form [formGroup]="formulaireLigne" class="formulaire">
+      <div class="champ">
+        <label>Catégorie</label>
+
+        <p-select
+          [options]="categoriesDisponibles"
+          optionLabel="libelle"
+          optionValue="idCategorie"
+          [(ngModel)]="categorieSelectionnee"
+          (onChange)="onCategorieChange($event.value)"
+          [ngModelOptions]="{ standalone: true }"
+          [showClear]="true"
+          placeholder="Toutes les catégories"
+          class="w-full"></p-select>
+      </div>
+
+      <div class="ligne-inventaire-saisie">
+        <div class="champ">
+          <label>Gadget *</label>
+
+          <p-select
+            [options]="gadgetsDisponibles"
+            optionLabel="libelle"
+            optionValue="idGadget"
+            formControlName="idGadget"
+            [filter]="true"
+            filterBy="libelle"
+            placeholder="Sélectionner un gadget"
+            emptyFilterMessage="Aucun gadget trouvé"
+            class="w-full"></p-select>
+        </div>
+
+        <div class="champ champ--etroit">
+          <label>Stock réel compté *</label>
+          <input type="number" min="0" formControlName="stockReel" />
+        </div>
+
+        <button
+          type="button"
+          class="bouton-secondaire"
+          [disabled]="enregistrementLigne"
+          (click)="saisirLigne()">
+          <i class="pi pi-check"></i>
+          @if (enregistrementLigne) {
+            Enregistrement...
+          } @else {
+            Enregistrer
+          }
+        </button>
+      </div>
+    </form>
+  }
+
+  <!-- LIGNES DE COMPTAGE -->
+  <h3 class="fiche-sous-titre">Résultats du comptage</h3>
+
+  <table class="tableau">
+    <thead>
+      <tr>
+        <th>Gadget</th>
+        <th>Stock théorique</th>
+        <th>Stock réel</th>
+        <th>Écart</th>
+        <th>Justification</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (ligne of inventaire.lignes; track ligne.idLigne) {
+        <tr>
+          <td class="tableau__cellule-forte">
+            {{ ligne.libelleGadget }}
+          </td>
+
+          <td>{{ ligne.stockTheorique }}</td>
+
+          <td>{{ ligne.stockReel }}</td>
+
+          <td>
+            @if (necessiteJustification(ligne)) {
+              <span class="valeur-alerte">
+                {{ ligne.ecart }}
+              </span>
+            } @else {
+              0
+            }
+          </td>
+
+          <td>
+            @if (!necessiteJustification(ligne)) {
+              <span class="fiche-texte-neutre">—</span>
+            } @else if (ligneEnJustification === ligne.idLigne) {
+              <div class="justification-edition">
+                <textarea
+                  rows="2"
+                  [(ngModel)]="texteJustification"
+                  [ngModelOptions]="{ standalone: true }"
+                  placeholder="Expliquez l'écart constaté...">
+                </textarea>
+
+                <div class="justification-edition__actions">
+                  <button
+                    type="button"
+                    class="bouton-secondaire"
+                    [disabled]="enregistrementJustification"
+                    (click)="enregistrerJustification(ligne)">
+                    <i class="pi pi-check"></i>
+                    Enregistrer
+                  </button>
+
+                  <button
+                    type="button"
+                    class="bouton-annuler"
+                    (click)="annulerJustification()">
+                    <i class="pi pi-times"></i>
+                  </button>
+                </div>
+              </div>
+            } @else if (ligne.justification) {
+              <div class="justification-lecture">
+                <p>{{ ligne.justification }}</p>
+
+                @if (justificationPossible) {
+                  <button
+                    type="button"
+                    class="bouton-icone"
+                    title="Modifier"
+                    (click)="ouvrirJustification(ligne)">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                }
+              </div>
+            } @else if (justificationPossible) {
+              <button
+                type="button"
+                class="bouton-secondaire bouton-secondaire--petit"
+                (click)="ouvrirJustification(ligne)">
+                Justifier
+              </button>
+            } @else {
+              <span class="valeur-alerte">Non justifié</span>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" class="empty-message">
+            Aucun comptage saisi pour l'instant.
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- TRANSITIONS D'ÉTAT -->
+  <div class="fiche-actions">
+    @if (enCours) {
+      <button
+        type="button"
+        class="bouton-primaire"
+        [disabled]="enregistrementTransition || inventaire.lignes.length === 0"
+        (click)="terminer()">
+        <i class="pi pi-flag"></i>
+        Terminer la saisie
+      </button>
+    }
+
+    @if (termine) {
+      <button
+        type="button"
+        class="bouton-primaire"
+        [disabled]="enregistrementTransition"
+        (click)="valider()">
+        <i class="pi pi-verified"></i>
+        Valider l'inventaire
+      </button>
+    }
+
+    @if (valide) {
+      <span class="etiquette-ok">
+        <i class="pi pi-check-circle"></i>
+        Inventaire validé — stock mis à jour
+      </span>
+    }
+  </div>
+} @else {
+  <p class="etat-chargement">Aucun inventaire sélectionné.</p>
+}

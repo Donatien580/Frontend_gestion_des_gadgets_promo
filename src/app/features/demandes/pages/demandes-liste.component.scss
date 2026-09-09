@@ -1,0 +1,519 @@
+/* =========================================================
+   PAGE DEMANDES
+   ========================================================= */
+
+.demandes-page {
+  min-height: 100%;
+  padding: 1rem 1.25rem;
+  background: #f4f7fb;
+
+  /* -------------------------------------------------------
+     BREADCRUMB
+     ------------------------------------------------------- */
+  &__breadcrumb {
+    margin-bottom: 0.75rem;
+
+    :host ::ng-deep {
+      .p-breadcrumb {
+        padding: 0.25rem 0;
+        border: none;
+        background: transparent;
+      }
+
+      .p-menuitem-link {
+        color: #64748b;
+        font-size: 0.85rem;
+      }
+
+      .p-menuitem:last-child .p-menuitem-link {
+        color: #2196f3;
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* -------------------------------------------------------
+     EN-TÊTE
+     ------------------------------------------------------- */
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e8edf3;
+  }
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  &__title {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.15rem;
+    font-weight: 650;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  /* -------------------------------------------------------
+     RECHERCHE
+     ------------------------------------------------------- */
+  &__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 280px;
+
+    > i {
+      position: absolute;
+      left: 0.75rem;
+      z-index: 1;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      height: 36px;
+      padding-left: 2.2rem;
+      padding-right: 0.75rem;
+      border: 1px solid #dce3eb;
+      border-radius: 0;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.82rem;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+      }
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+  }
+
+  /* -------------------------------------------------------
+     FILTRES
+     ------------------------------------------------------- */
+  &__filtres {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__select {
+    height: 36px;
+    min-width: 170px;
+    padding: 0 2rem 0 0.75rem;
+    border: 1px solid #dce3eb;
+    border-radius: 0;
+    outline: none;
+    background: #ffffff;
+    color: #334155;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:focus {
+      border-color: #64b5f6;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    &:hover {
+      border-color: #b8c7d8;
+    }
+  }
+
+  &__total {
+    margin-left: auto;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* -------------------------------------------------------
+     TABLEAU
+     ------------------------------------------------------- */
+  &__table {
+    margin-top: 0.5rem;
+  }
+}
+
+/* =========================================================
+   BOUTON PRINCIPAL (VERT)
+   ========================================================= */
+
+.bouton-primaire {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 0;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    background: #16a34a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #16a34a;
+    outline-offset: 2px;
+  }
+}
+
+/* =========================================================
+   TABLEAU PRIME NG
+   ========================================================= */
+
+:host ::ng-deep {
+  .demandes-page__table {
+    .p-datatable {
+      border: none !important;
+      border-radius: 0 !important;
+      font-size: 0.85rem;
+    }
+
+    /* En-tête */
+    .p-datatable-thead > tr > th {
+      padding: 0.8rem 0.7rem;
+      background: #eaf4ff;
+      color: #1e5f91;
+      font-size: 0.76rem;
+      font-weight: 650;
+      border-top: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid #d6e8f7;
+    }
+
+    /* Cellules */
+    .p-datatable-tbody > tr > td {
+      padding: 0.65rem 0.7rem;
+      color: #334155;
+      border-left: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    /* Alternance */
+    .p-datatable-tbody > tr:nth-child(even) {
+      background: #f8fbff;
+    }
+    .p-datatable-tbody > tr:nth-child(odd) {
+      background: #ffffff;
+    }
+
+    /* Hover */
+    .p-datatable-tbody > tr:hover {
+      background: #eef7ff;
+    }
+
+    /* Dernière colonne centrée */
+    .p-datatable-thead > tr > th:last-child,
+    .p-datatable-tbody > tr > td:last-child {
+      text-align: center;
+    }
+  }
+}
+
+/* =========================================================
+   CELLULE FORTE
+   ========================================================= */
+
+.demandes-page__table {
+  td strong,
+  .tableau__cellule-forte {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  td small {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+}
+
+/* =========================================================
+   TYPES DE DEMANDE
+   ========================================================= */
+
+.type-interne,
+.type-externe {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.type-interne {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.type-externe {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
+
+/* =========================================================
+   STATUTS
+   ========================================================= */
+
+.statut-demande {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+
+.statut-attente {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.statut-valide {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.statut-affectee {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+
+.statut-traitee {
+  background: #ecfdf3;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.statut-refusee {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.statut-annulee {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+:host ::ng-deep {
+  .actions-cell {
+    .p-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 0 !important;
+    }
+  }
+}
+
+/* =========================================================
+   MESSAGE AUCUNE DEMANDE
+   ========================================================= */
+
+.empty-message {
+  padding: 2.5rem 1rem !important;
+  text-align: center;
+  color: #64748b;
+}
+
+.empty-message__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.empty-message__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0.25rem;
+  border-radius: 50%;
+  background: #eaf4ff;
+  color: #64b5f6;
+  font-size: 1.2rem;
+}
+
+.empty-message__content strong {
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.empty-message__content span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* =========================================================
+   MODALES
+   ========================================================= */
+
+:host ::ng-deep {
+  .p-dialog {
+    border-radius: 0 !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  }
+
+  .p-dialog-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e8edf3;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+
+  .p-dialog-content {
+    padding: 1.25rem;
+    background: #ffffff;
+  }
+
+  .p-dialog-footer {
+    border-top: 1px solid #e8edf3;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .demandes-page {
+    padding: 0.75rem;
+
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+    }
+
+    &__left {
+      width: 100%;
+    }
+
+    &__actions {
+      width: 100%;
+    }
+
+    &__search {
+      width: 100%;
+    }
+
+    &__filtres {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    &__select {
+      width: 100%;
+    }
+
+    &__total {
+      margin-left: 0;
+      align-self: flex-start;
+    }
+
+    &__table {
+      overflow-x: auto;
+    }
+  }
+
+  :host ::ng-deep {
+    .demandes-page__table {
+      .p-datatable {
+        min-width: 700px;
+        font-size: 0.8rem;
+      }
+
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: 0.6rem;
+      }
+    }
+
+    .p-dialog {
+      width: calc(100vw - 2rem) !important;
+      max-width: calc(100vw - 2rem);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .demandes-page {
+    padding: 0.5rem;
+
+    &__title {
+      font-size: 1.05rem;
+    }
+  }
+
+  :host ::ng-deep {
+    .demandes-page {
+      .p-card-body {
+        padding: 0.9rem;
+      }
+    }
+  }
+}

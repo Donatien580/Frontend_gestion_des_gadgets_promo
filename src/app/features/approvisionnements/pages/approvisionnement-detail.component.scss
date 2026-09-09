@@ -1,0 +1,93 @@
+.etat-chargement {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.fiche {
+  margin-bottom: var(--space-6);
+}
+
+.fiche-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin: 0;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+
+  dt {
+    font-size: var(--font-size-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+}
+
+.fiche-observations {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-surface-100);
+  font-size: var(--font-size-small);
+}
+
+.fiche-sous-titre {
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.valeur-alerte {
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.liste-incidents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.liste-incidents__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-50);
+}
+
+.liste-incidents__description {
+  margin: 0 0 4px;
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+}
+
+.liste-incidents__date {
+  font-size: var(--font-size-micro);
+  color: var(--color-text-muted);
+}
+
+.statut-decision {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffe69c;
+  white-space: nowrap;
+}

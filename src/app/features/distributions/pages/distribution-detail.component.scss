@@ -1,0 +1,180 @@
+/* =========================================================
+   DÉTAIL DISTRIBUTION
+   ========================================================= */
+
+.detail-distribution {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e8edf3;
+
+    h3 {
+      margin: 0;
+      color: #1e293b;
+      font-size: 1.05rem;
+      font-weight: 650;
+    }
+  }
+
+  &__corps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    p {
+      margin: 0;
+      color: #334155;
+      font-size: 0.85rem;
+      line-height: 1.5;
+
+      strong {
+        color: #1e293b;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    //justify-content: flex-end;
+  }
+}
+
+/* =========================================================
+   STATUTS
+   ========================================================= */
+
+.statut-demande {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+
+.statut-attente {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.statut-valide {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.statut-traitee {
+  background: #ecfdf3;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.statut-annulee {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+/* =========================================================
+   TABLEAU DES LIGNES
+   ========================================================= */
+
+.table-lignes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+
+  th,
+  td {
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-size: 0.82rem;
+    color: #334155;
+  }
+
+  th {
+    background: #f8fafc;
+    color: #1e5f91;
+    font-weight: 650;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f8fbff;
+  }
+
+  tbody tr:hover {
+    background: #eef7ff;
+  }
+}
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.bouton-primaire {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 0;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    background: #16a34a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #16a34a;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .detail-distribution {
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    &__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .table-lignes {
+    font-size: 0.75rem;
+  }
+}

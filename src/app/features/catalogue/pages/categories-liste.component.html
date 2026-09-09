@@ -1,0 +1,263 @@
+<div class="categories-page">
+  <div class="categories-page__breadcrumb">
+    <p-breadcrumb [model]="items"></p-breadcrumb>
+  </div>
+
+  <p-card styleClass="categories-card">
+    <div class="categories-page__header">
+      <div class="categories-page__left">
+        <h2 class="categories-page__title">Liste des catégories</h2>
+        <p-button
+          label="Ajouter"
+          icon="pi pi-plus"
+          severity="primary"
+          (onClick)="openModalCreate()"></p-button>
+      </div>
+      <div class="categories-page__actions">
+        <div class="categories-page__search">
+          <i class="pi pi-search"></i>
+
+          <input
+            type="text"
+            pInputText
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Rechercher une catégorie..." />
+        </div>
+      </div>
+    </div>
+
+    @if (message) {
+      <p-message
+        [severity]="message.severity"
+        [text]="message.text"
+        class="categories-page__message">
+      </p-message>
+    }
+
+    <div class="categories-page__table">
+      <p-table
+        #dt
+        [value]="categories"
+        [paginator]="true"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [loading]="isLoading"
+        [globalFilterFields]="['libelle', 'description']"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}"
+        responsiveLayout="scroll"
+        styleClass="categories-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="libelle">
+              <div class="table-header-cell">
+                <span>Libellé</span>
+                <p-sortIcon field="libelle"></p-sortIcon>
+              </div>
+            </th>
+
+            <th pSortableColumn="description">
+              <div class="table-header-cell">
+                <span>Description</span>
+                <p-sortIcon field="description"></p-sortIcon>
+              </div>
+            </th>
+
+            <th class="actions-column">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-categorie let-rowIndex="rowIndex">
+          <tr>
+            <td>
+              <div class="categorie-name">
+                <strong>
+                  {{ categorie.libelle }}
+                </strong>
+              </div>
+            </td>
+
+            <td>
+              <span class="categorie-description">
+                {{ categorie.description || "Aucune description" }}
+              </span>
+            </td>
+
+            <td>
+              <div class="actions-cell">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  pTooltip="Afficher"
+                  tooltipPosition="top"
+                  (onClick)="openModalDetail(categorie)">
+                </p-button>
+
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="warn"
+                  pTooltip="Modifier"
+                  tooltipPosition="top"
+                  (onClick)="openModalEdit(categorie)">
+                </p-button>
+
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="danger"
+                  pTooltip="Supprimer"
+                  tooltipPosition="top"
+                  (onClick)="onDelete(categorie)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="empty-message">
+              <div class="empty-message__content">
+                <div class="empty-message__icon">
+                  <i class="pi pi-inbox"></i>
+                </div>
+
+                <strong> Aucune catégorie trouvée </strong>
+
+                <span> Commencez par ajouter une nouvelle catégorie. </span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog
+      header="Ajouter une catégorie"
+      [(visible)]="createDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '450px' }">
+      <div class="categorie-form">
+        <div class="field">
+          <label for="create-libelle">Libellé *</label>
+          <input
+            id="create-libelle"
+            type="text"
+            pInputText
+            [(ngModel)]="categorie.libelle"
+            placeholder="Ex : Informatique"
+            autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="create-description">Description</label>
+          <input
+            id="create-description"
+            type="text"
+            pInputText
+            [(ngModel)]="categorie.description"
+            placeholder="Ex : Matériel informatique"
+            autocomplete="off" />
+        </div>
+      </div>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Annuler"
+          severity="secondary"
+          [text]="true"
+          (onClick)="closeCreateDialog()"></p-button>
+        <p-button
+          label="Enregistrer"
+          icon="pi pi-check"
+          [loading]="isSaving"
+          (onClick)="save()"></p-button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog
+      header="Modifier la catégorie"
+      [(visible)]="editDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '450px' }">
+      <div class="categorie-form">
+        <div class="field">
+          <label for="edit-libelle">Libellé *</label>
+          <input
+            id="edit-libelle"
+            type="text"
+            pInputText
+            [(ngModel)]="categorie.libelle"
+            autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="edit-description">Description</label>
+          <input
+            id="edit-description"
+            type="text"
+            pInputText
+            [(ngModel)]="categorie.description"
+            autocomplete="off" />
+        </div>
+      </div>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Annuler"
+          severity="secondary"
+          [text]="true"
+          (onClick)="closeEditDialog()"></p-button>
+        <p-button
+          label="Enregistrer"
+          icon="pi pi-check"
+          [loading]="isSaving"
+          (onClick)="update()"></p-button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog
+      header="Détails de la catégorie"
+      [(visible)]="detailDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '450px' }">
+      <p-divider></p-divider>
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item list-group-item-action">
+              <span class="va-m"
+                ><span class="font-bold">Libellé:</span>
+                {{ categorie.libelle }}</span
+              >
+            </li>
+            <li class="list-group-item list-group-item-action">
+              <span class="va-m"
+                ><span class="font-bold">Description:</span>
+                {{ categorie.description }}</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p-divider></p-divider>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Fermer"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="detailDialogVisible = false"></p-button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+
+  <app-confirmation></app-confirmation>
+</div>

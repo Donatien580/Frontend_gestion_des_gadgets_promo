@@ -1,0 +1,115 @@
+<!-- <div [formGroup]="formulaire" class="formulaire">
+  <div class="champ">
+    <label for="idDemande">Demande acceptée *</label>
+    <select
+      id="idDemande"
+      formControlName="idDemande"
+      (change)="onDemandeSelected($any($event.target).value)">
+      <option [ngValue]="null" disabled>Sélectionner une demande…</option>
+      @for (demande of demandesAcceptees; track demande.idDemande) {
+        <option [ngValue]="demande.idDemande">
+          {{ demande.numeroDemande }} - {{ demande.objet }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <div class="formulaire__ligne">
+    <div class="champ champ--etroit">
+      <label for="dateDistribution">Date distribution</label>
+      <input
+        id="dateDistribution"
+        type="datetime-local"
+        formControlName="dateDistribution" />
+    </div>
+    <div class="champ">
+      <label for="destinataire">Destinataire (auto)</label>
+      <input
+        id="destinataire"
+        type="text"
+        formControlName="destinataire"
+        [disabled]="true" />
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="motif">Motif</label>
+    <textarea id="motif" formControlName="motif" rows="2"></textarea>
+  </div>
+
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
+      Annuler
+    </button>
+    <button
+      type="button"
+      class="bouton-primaire"
+      (click)="enregistrer()"
+      [disabled]="enregistrement">
+      @if (enregistrement) {
+        <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+        <i class="pi pi-save"></i>
+      }
+      Enregistrer
+    </button>
+  </div>
+</div> -->
+
+<div [formGroup]="formulaire" class="formulaire">
+  <div class="champ">
+    <label for="idDemande">Demande acceptée *</label>
+    <select
+      id="idDemande"
+      formControlName="idDemande"
+      (ngModelChange)="onDemandeSelected($event)">
+      <option [ngValue]="null" disabled>Sélectionner une demande…</option>
+      @for (demande of demandesAcceptees; track demande.idDemande) {
+        <option [ngValue]="demande.idDemande">
+          {{ demande.numeroDemande }} - {{ demande.objet }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <div class="formulaire__ligne">
+    <div class="champ champ--etroit">
+      <label for="dateDistribution">Date distribution</label>
+      <input
+        id="dateDistribution"
+        type="datetime-local"
+        formControlName="dateDistribution" />
+    </div>
+    <div class="champ">
+      <label for="destinataire">Destinataire (auto)</label>
+      <input
+        id="destinataire"
+        type="text"
+        formControlName="destinataire"
+        readonly />
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="motif">Motif</label>
+    <textarea id="motif" formControlName="motif" rows="2"></textarea>
+  </div>
+
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
+      Annuler
+    </button>
+    <button
+      type="button"
+      class="bouton-primaire"
+      (click)="enregistrer()"
+      [disabled]="enregistrement">
+      @if (enregistrement) {
+        <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+        <i class="pi pi-save"></i>
+      }
+      Enregistrer
+    </button>
+  </div>
+</div>

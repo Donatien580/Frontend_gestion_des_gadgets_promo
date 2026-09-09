@@ -1,0 +1,14 @@
+<div class="barre-recherche">
+  <i class="pi pi-search barre-recherche__icone"></i>
+  <input
+    type="text"
+    [placeholder]="placeholder"
+    [ngModel]="valeur"
+    (ngModelChange)="surSaisie($event)"
+  />
+  @if (valeur) {
+    <button type="button" class="barre-recherche__effacer" (click)="effacer()" aria-label="Effacer la recherche">
+      <i class="pi pi-times"></i>
+    </button>
+  }
+</div>

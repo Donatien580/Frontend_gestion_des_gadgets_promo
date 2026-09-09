@@ -1,0 +1,98 @@
+.modale-fond {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 1000;
+  animation: modale-fondu 0.15s ease;
+}
+
+.modale {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - var(--space-8));
+  background: var(--color-surface-0);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  animation: modale-apparition 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &--petite { max-width: 420px; }
+  &--moyenne { max-width: 620px; }
+  &--grande { max-width: 880px; }
+
+  &--agrandie {
+    max-width: calc(100vw - var(--space-8));
+    height: calc(100vh - var(--space-8));
+  }
+}
+
+.modale__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-surface-200);
+  flex-shrink: 0;
+
+  h2 { margin: 0; font-size: var(--font-size-h3); }
+}
+
+.modale__entete-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.modale__bouton-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--color-surface-100);
+    color: var(--color-text-primary);
+  }
+}
+
+.modale__corps {
+  padding: var(--space-6);
+  overflow-y: auto;
+}
+
+.modale__pied {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-surface-200);
+  flex-shrink: 0;
+
+  &:empty {
+    display: none;
+    padding: 0;
+    border: none;
+  }
+}
+
+@keyframes modale-fondu {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modale-apparition {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

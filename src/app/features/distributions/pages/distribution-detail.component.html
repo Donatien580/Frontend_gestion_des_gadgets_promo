@@ -1,0 +1,210 @@
+<!-- <div class="detail-distribution" *ngIf="distribution">
+  <div class="detail-distribution__header">
+    <h3>{{ distribution.numeroBordereau }}</h3>
+    <span class="statut-demande" [class]="getEtatClasse(distribution.etat)">
+      {{ getEtatLibelle(distribution.etat) }}
+    </span>
+  </div>
+
+  <div class="detail-distribution__corps">
+    <p>
+      <strong>Date distribution :</strong>
+      {{ distribution.dateDistribution | date: "dd/MM/yyyy HH:mm" }}
+    </p>
+    <p><strong>Type :</strong> {{ distribution.typeDistribution }}</p>
+    <p>
+      <strong>Destinataire :</strong> {{ distribution.destinataire || "—" }}
+    </p>
+    <p><strong>Motif :</strong> {{ distribution.motif || "—" }}</p>
+    <p>
+      <strong>Demande liée :</strong> {{ distribution.numeroDemande }} -
+      {{ distribution.objetDemande }}
+    </p>
+
+    @if (distribution.dateGenerationBordereau) {
+      <p>
+        <strong>Date génération bordereau :</strong>
+        {{ distribution.dateGenerationBordereau | date: "dd/MM/yyyy HH:mm" }}
+      </p>
+    }
+    @if (distribution.dateSignature) {
+      <p>
+        <strong>Date signature :</strong>
+        {{ distribution.dateSignature | date: "dd/MM/yyyy HH:mm" }}
+      </p>
+      <p><strong>Signé par :</strong> {{ distribution.signePar }}</p>
+    }
+
+    <h4>Lignes de distribution</h4>
+    <table class="table-lignes">
+      <thead>
+        <tr>
+          <th>Gadget</th>
+          <th>Quantité distribuée</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ligne of distribution.lignes; track ligne.idLigne) {
+          <tr>
+            <td>{{ ligne.libelleGadget }}</td>
+            <td>{{ ligne.quantiteDistribuee }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="detail-distribution__actions">
+      @if (distribution.etat === "EN_ATTENTE") {
+        <p-button
+          label="Exécuter"
+          icon="pi pi-play"
+          severity="primary"
+          (onClick)="executer()"></p-button>
+      }
+      @if (
+        distribution.etat === "EN_ATTENTE" ||
+        distribution.etat === "EXECUTEE" ||
+        distribution.etat === "BORDEREAU_GENERE"
+      ) {
+        <p-button
+          label="Générer bordereau"
+          icon="pi pi-file-pdf"
+          severity="warn"
+          (onClick)="genererPdf()"></p-button>
+      }
+      @if (
+        distribution.etat === "BORDEREAU_GENERE" ||
+        distribution.etat === "EXECUTEE"
+      ) {
+        <p-button
+          label="Signer"
+          icon="pi pi-check-circle"
+          severity="success"
+          (onClick)="signer()"></p-button>
+      }
+    </div>
+  </div>
+</div> -->
+
+@if (distribution) {
+  <div class="detail-distribution">
+    <div class="detail-distribution__header">
+      <h3>{{ distribution.numeroBordereau }}</h3>
+      <span class="statut-demande" [class]="getEtatClasse(distribution.etat)">
+        {{ getEtatLibelle(distribution.etat) }}
+      </span>
+    </div>
+
+    <div class="detail-distribution__corps">
+      <div class="info-item">
+        <strong>Date distribution :</strong>
+        {{ distribution.dateDistribution | date: "dd/MM/yyyy HH:mm" }}
+      </div>
+      <div class="info-item">
+        <strong>Type :</strong> {{ distribution.typeDistribution }}
+      </div>
+      <div class="info-item">
+        <strong>Destinataire :</strong> {{ distribution.destinataire || "—" }}
+      </div>
+      <div class="info-item">
+        <strong>Motif :</strong> {{ distribution.motif || "—" }}
+      </div>
+      <div class="info-item">
+        <strong>Demande liée :</strong>
+        {{ distribution.numeroDemande }} - {{ distribution.objetDemande }}
+      </div>
+
+      <!-- Informations supplémentaires selon le type -->
+      @if (distribution.typeDistribution === "INTERNE" && demande) {
+        <div class="info-item">
+          <strong>Nombre de personnes impactées :</strong>
+          {{ demande.nombrePersonnelsImpactes }}
+        </div>
+      }
+      @if (distribution.typeDistribution === "EXTERNE" && demande) {
+        <div class="info-item">
+          <strong>Structure demandeuse :</strong> {{ demande.structure }}
+        </div>
+        <div class="info-item">
+          <strong>Nom du responsable :</strong> {{ demande.representant }}
+        </div>
+      }
+
+      @if (distribution.dateGenerationBordereau) {
+        <div class="info-item">
+          <strong>Date génération bordereau :</strong>
+          {{ distribution.dateGenerationBordereau | date: "dd/MM/yyyy HH:mm" }}
+        </div>
+      }
+      @if (distribution.dateSignature) {
+        <div class="info-item">
+          <strong>Date signature :</strong>
+          {{ distribution.dateSignature | date: "dd/MM/yyyy HH:mm" }}
+        </div>
+        <div class="info-item">
+          <strong>Signé par :</strong> {{ distribution.signePar }}
+        </div>
+      }
+
+      <h4>Lignes de distribution</h4>
+      <div class="table-responsive">
+        <table class="table-lignes">
+          <thead>
+            <tr>
+              <th>Gadget</th>
+              <th>Quantité distribuée</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ligne of distribution.lignes; track ligne.idLigne) {
+              <tr>
+                <td>{{ ligne.libelleGadget }}</td>
+                <td>{{ ligne.quantiteDistribuee }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total gadgets distribués</strong></td>
+              <td>
+                <strong>{{ totalGadgetsDistribues }}</strong>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Actions -->
+      <div class="detail-distribution__actions">
+        @if (distribution.etat === "EN_ATTENTE") {
+          <p-button
+            label="Exécuter"
+            icon="pi pi-play"
+            severity="primary"
+            (onClick)="executer()"></p-button>
+        }
+        @if (
+          distribution.etat === "EN_ATTENTE" ||
+          distribution.etat === "EXECUTEE" ||
+          distribution.etat === "BORDEREAU_GENERE"
+        ) {
+          <p-button
+            label="Générer bordereau"
+            icon="pi pi-file-pdf"
+            severity="warn"
+            (onClick)="genererPdf()"></p-button>
+        }
+        @if (
+          distribution.etat === "BORDEREAU_GENERE" ||
+          distribution.etat === "EXECUTEE"
+        ) {
+          <!-- <p-button
+            label="Signer"
+            icon="pi pi-check-circle"
+            severity="success"
+            (onClick)="signer()"></p-button> -->
+        }
+      </div>
+    </div>
+  </div>
+}

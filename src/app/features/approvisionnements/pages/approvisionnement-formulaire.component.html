@@ -1,0 +1,182 @@
+<form [formGroup]="formulaire" class="formulaire">
+  <div class="formulaire__ligne-entete">
+    <div class="champ">
+      <label for="fournisseur"> Fournisseur * </label>
+
+      <input
+        id="fournisseur"
+        type="text"
+        formControlName="fournisseur"
+        placeholder="Nom du fournisseur" />
+
+      @if (fournisseur.invalid && fournisseur.touched) {
+        <span class="champ__erreur"> Le fournisseur est obligatoire. </span>
+      }
+    </div>
+
+    <!-- Numéro PV -->
+
+    <div class="champ">
+      <label for="numeroPV"> N° de PV de réception </label>
+
+      <div class="numero-pv">
+        <span class="numero-pv__prefixe"> PV- </span>
+
+        <input
+          id="numeroPV"
+          type="text"
+          inputmode="numeric"
+          formControlName="numeroPV"
+          maxlength="6"
+          placeholder="001" />
+      </div>
+
+      @if (numeroPVApercu) {
+        <span class="champ__aide">
+          Numéro final :
+          <strong>
+            {{ numeroPVApercu }}
+          </strong>
+        </span>
+      } @else {
+        <span class="champ__aide"> Exemple : PV-001 </span>
+      }
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="observations"> Observations générales </label>
+
+    <textarea
+      id="observations"
+      formControlName="observations"
+      rows="3"
+      placeholder="Observations concernant la réception...">
+    </textarea>
+  </div>
+
+  <hr class="formulaire__separateur" />
+
+  <div class="formulaire__titre-container">
+    <h3 class="formulaire__titre-lignes">Gadgets réceptionnés</h3>
+
+    <span class="formulaire__aide">
+      Ajoutez les gadgets concernés par cette réception.
+    </span>
+  </div>
+
+  <div formArrayName="lignes" class="lignes-approvisionnement">
+    @for (ligne of lignes.controls; track ligne; let i = $index) {
+      <div class="ligne-approvisionnement" [formGroupName]="i">
+        <div class="ligne-approvisionnement__grille">
+          <div class="champ">
+            <label> Catégorie </label>
+            <p-select
+              [options]="categoriesDisponibles"
+              optionLabel="libelle"
+              optionValue="idCategorie"
+              formControlName="idCategorieFiltre"
+              (onChange)="onCategorieChange(i, $event.value)"
+              placeholder="Tous les catégories"
+              [showClear]="true"
+              class="w-full"></p-select>
+          </div>
+
+          <div class="champ">
+            <label> Gadget * </label>
+            <p-select
+              [options]="gadgetsParLigne[i]"
+              optionLabel="libelle"
+              optionValue="idGadget"
+              formControlName="idGadget"
+              [filter]="true"
+              filterBy="libelle"
+              placeholder="Sélectionner une gadget"
+              class="w-full"></p-select>
+          </div>
+
+          <div class="champ champ--etroit">
+            <label> Qté commandée </label>
+
+            <input type="number" min="0" formControlName="quantiteCommandee" />
+          </div>
+
+          <div class="champ champ--etroit">
+            <label> Qté reçue * </label>
+
+            <input type="number" min="1" formControlName="quantiteRecue" />
+          </div>
+
+          <div class="champ champ--etroit">
+            <label> Qté défectueuse </label>
+
+            <input
+              type="number"
+              min="0"
+              formControlName="quantiteDefectueuse" />
+          </div>
+
+          <div class="champ champ--etroit champ--lecture-seule">
+            <label> Conforme </label>
+
+            <span class="valeur-calculee">
+              {{ quantiteConforme(i) }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="bouton-icone bouton-icone--supprimer"
+            (click)="retirerLigne(i)"
+            [disabled]="lignes.length === 1"
+            title="Supprimer">
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+
+        @if (ligne.errors?.["defectueuseSuperieureARecue"]) {
+          <span class="champ__erreur">
+            La quantité défectueuse ne peut pas dépasser la quantité reçue.
+          </span>
+        }
+
+        <div class="champ">
+          <label> Observation qualité si défectueux </label>
+
+          <input
+            type="text"
+            formControlName="observationQualite"
+            placeholder="Ex : emballage abîmé, produit endommagé..." />
+        </div>
+      </div>
+    }
+  </div>
+
+  <!--AJOUTER UNE LIGNE-->
+  <button type="button" class="bouton-secondaire" (click)="ajouterLigne()">
+    <i class="pi pi-plus"></i>
+    Ajouter un gadget
+  </button>
+
+  <!-- ACTIONS -->
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-annuler" (click)="annulerFormulaire()">
+      <i class="pi pi-times"></i>
+      Annuler
+    </button>
+
+    <button
+      type="button"
+      class="bouton-enregistrer"
+      [disabled]="enregistrement"
+      (click)="enregistrer()">
+      <i class="pi pi-check"></i>
+
+      @if (enregistrement) {
+        Enregistrement...
+      } @else {
+        Enregistrer
+      }
+    </button>
+  </div>
+</form>

@@ -1,0 +1,149 @@
+<div class="distribution-page">
+  <div class="distribution-page__breadcrumb">
+    <p-breadcrumb [model]="items"></p-breadcrumb>
+  </div>
+
+  <p-card styleClass="distribution-card">
+    <div class="distribution-page__header">
+      <div class="distribution-page__left">
+        <h2 class="distribution-page__title">Liste des distributions</h2>
+        <button
+          type="button"
+          class="bouton-primaire"
+          (click)="ouvrirCreation()">
+          <i class="pi pi-plus"></i> Nouvelle distribution
+        </button>
+      </div>
+      <!-- Pas de recherche pour l'instant, on peut en ajouter plus tard -->
+    </div>
+
+    <div class="distribution-page__table">
+      <p-table
+        [value]="distributions"
+        [paginator]="true"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [loading]="isLoading"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}"
+        responsiveLayout="scroll"
+        (onPage)="changerPage($event)"
+        styleClass="distribution-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Bordereau</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Destinataire</th>
+            <th>État</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-distribution>
+          <tr>
+            <td class="tableau__cellule-forte">
+              {{ distribution.numeroBordereau }}
+            </td>
+            <td>
+              {{ distribution.dateDistribution | date: "dd/MM/yyyy HH:mm" }}
+            </td>
+            <td>
+              @if (distribution.typeDistribution === "INTERNE") {
+                <span class="type-interne"> Interne </span>
+              } @else {
+                <span class="type-externe"> Externe </span>
+              }
+            </td>
+            <td>{{ distribution.destinataire || "—" }}</td>
+            <td>
+              <span
+                class="statut-demande"
+                [class]="getEtatClasse(distribution.etat)">
+                {{ getEtatLibelle(distribution.etat) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  pTooltip="Détail"
+                  tooltipPosition="top"
+                  (onClick)="ouvrirDetail(distribution)"></p-button>
+
+                <!-- @if (distribution.etat === "EN_ATTENTE") {
+                  <p-button
+                    icon="pi pi-play"
+                    [text]="true"
+                    [rounded]="true"
+                    severity="primary"
+                    pTooltip="Exécuter"
+                    tooltipPosition="top"
+                    (onClick)="
+                      executer(distribution.idDistribution)
+                    "></p-button>
+                } -->
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="empty-message">
+              <div class="empty-message__content">
+                <div class="empty-message__icon">
+                  <i class="pi pi-inbox"></i>
+                </div>
+                <strong>Aucune distribution trouvée</strong>
+                <span
+                  >Créez une distribution à partir d'une demande acceptée.</span
+                >
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Modale de création -->
+    <p-dialog
+      [(visible)]="creationVisible"
+      header="Nouvelle distribution"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '600px' }"
+      (onHide)="fermerCreation()">
+      <app-distribution-formulaire
+        (enregistre)="onDistributionCreee()"
+        (annuler)="fermerCreation()"></app-distribution-formulaire>
+    </p-dialog>
+
+    <!-- Modale de détail -->
+    <p-dialog
+      [(visible)]="detailVisible"
+      header="Détail de la distribution"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '700px' }">
+      <app-distribution-detail
+        [distribution]="distributionDetail"
+        (signe)="
+          signer(distributionDetail?.idDistribution!)
+        "></app-distribution-detail>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Fermer"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="fermerDetail()"></p-button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+</div>

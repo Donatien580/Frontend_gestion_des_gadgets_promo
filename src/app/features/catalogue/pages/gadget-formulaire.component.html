@@ -1,0 +1,115 @@
+<form [formGroup]="formulaire" class="gadget-formulaire">
+  <!--PHOTO-->
+  <div class="gadget-formulaire__photo">
+    <div class="photo-preview">
+      @if (apercuUrl) {
+        <img [src]="apercuUrl | urlPhoto" alt="Photo du gadget" />
+      } @else {
+        <i class="pi pi-image"></i>
+      }
+    </div>
+
+    <div class="photo-actions">
+      <label class="photo-button">
+        <i class="pi pi-upload"></i>
+        {{ apercuUrl ? "Changer la photo" : "Choisir une photo" }}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          (change)="choisirPhoto($event)" />
+      </label>
+      <small> JPEG, PNG ou WEBP — 5 Mo maximum. </small>
+    </div>
+  </div>
+
+  <!-- LIBELLÉ-->
+  <div class="form-field">
+    <label for="libelle"> Libellé * </label>
+    <input
+      id="libelle"
+      type="text"
+      formControlName="libelle"
+      maxlength="100"
+      pInputText
+      placeholder="Ex : T-shirt SONABEL" />
+    @if (libelle.invalid && libelle.touched) {
+      <small class="form-error"> Le libellé est obligatoire. </small>
+    }
+  </div>
+
+  <!-- DÉSIGNATION + CATÉGORIE-->
+  <div class="form-row">
+    <!-- Désignation -->
+    <div class="form-field">
+      <label for="designation"> Désignation courte </label>
+      <input
+        id="designation"
+        type="text"
+        formControlName="designation"
+        maxlength="30"
+        pInputText
+        placeholder="Ex : T-shirt blanc" />
+    </div>
+
+    <!-- Catégorie -->
+    <div class="form-field">
+      <label for="categorie"> Catégorie * </label>
+      <select id="categorie" formControlName="idCategorie">
+        <option [ngValue]="null" disabled>Sélectionner une catégorie</option>
+        @for (categorie of categories; track categorie.idCategorie) {
+          <option [ngValue]="categorie.idCategorie">
+            {{ categorie.libelle }}
+          </option>
+        }
+      </select>
+      @if (idCategorie.invalid && idCategorie.touched) {
+        <small class="form-error"> La catégorie est obligatoire. </small>
+      }
+    </div>
+  </div>
+
+  <!--DESCRIPTION -->
+
+  <div class="form-field">
+    <label for="description"> Description </label>
+    <textarea
+      id="description"
+      formControlName="description"
+      rows="3"
+      placeholder="Description du gadget...">
+    </textarea>
+  </div>
+
+  <!--SEUIL -->
+  <div class="form-field form-field--small">
+    <label for="seuilAlerte"> Seuil d'alerte * </label>
+    <input
+      id="seuilAlerte"
+      type="number"
+      min="0"
+      formControlName="seuilAlerte"
+      pInputText />
+    <small class="form-help">
+      Une alerte sera affichée lorsque le stock atteint ce seuil.
+    </small>
+  </div>
+
+  <!-- ACTIONS-->
+  <div class="form-actions">
+    <p-button
+      label="Annuler"
+      icon="pi pi-times"
+      [raised]="true"
+      severity="secondary"
+      (onClick)="Annuler()">
+    </p-button>
+    <p-button
+      [disabled]="isSaving"
+      icon="pi pi-check"
+      label="Enregistrer"
+      [raised]="true"
+      severity="success"
+      (click)="enregistrer()">
+    </p-button>
+  </div>
+</form>

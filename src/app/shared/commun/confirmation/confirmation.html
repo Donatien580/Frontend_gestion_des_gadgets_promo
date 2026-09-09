@@ -1,0 +1,18 @@
+<p-confirmDialog #cd header="Confirmation" icon="pi pi-trash">
+  <ng-template pTemplate="footer">
+    <button
+      label="Non, j'annule"
+      (click)="cd.onReject()"
+      pButton
+      type="button"
+      icon="pi pi-times"
+      class="p-button-danger p-button-raised p-mr-3"></button>
+    <button
+      label="Oui, je confirme"
+      (click)="cd.onAccept()"
+      pButton
+      type="button"
+      icon="pi pi-check"
+      class="p-button-success p-button-raised p-mr-3"></button>
+  </ng-template>
+</p-confirmDialog>

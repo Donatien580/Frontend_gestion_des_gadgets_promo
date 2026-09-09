@@ -1,0 +1,69 @@
+<form [formGroup]="formulaire" (ngSubmit)="enregistrer()" class="formulaire">
+  <div class="formulaire__ligne">
+    <div class="champ">
+      <label for="nom">Nom *</label>
+      <input id="nom" type="text" formControlName="nom" />
+      @if (formulaire.get("nom")?.invalid && formulaire.get("nom")?.touched) {
+        <small class="erreur">Champ obligatoire</small>
+      }
+    </div>
+    <div class="champ">
+      <label for="prenom">Prénom</label>
+      <input id="prenom" type="text" formControlName="prenom" />
+    </div>
+  </div>
+
+  <div class="formulaire__ligne">
+    <div class="champ">
+      <label for="matricule">Matricule</label>
+      <input id="matricule" type="text" formControlName="matricule" />
+    </div>
+    <div class="champ">
+      <label for="telephone">Téléphone</label>
+      <input id="telephone" type="text" formControlName="telephone" />
+    </div>
+  </div>
+
+  <div class="formulaire__ligne">
+    <div class="champ">
+      <label for="fonction">Fonction</label>
+      <input id="fonction" type="text" formControlName="fonction" />
+    </div>
+    <div class="champ">
+      <label for="idService">Service *</label>
+      <select id="idService" formControlName="idService">
+        <option [ngValue]="null" disabled>Sélectionner un service…</option>
+        @for (service of services; track service.idService) {
+          <option [ngValue]="service.idService">
+            {{ service.libelleService }}
+          </option>
+        }
+      </select>
+      @if (
+        formulaire.get("idService")?.invalid &&
+        formulaire.get("idService")?.touched
+      ) {
+        <small class="erreur">Champ obligatoire</small>
+      }
+    </div>
+  </div>
+
+  <div class="champ champ--case">
+    <label for="actif">Actif</label>
+    <p-checkbox id="actif" formControlName="actif" [binary]="true"></p-checkbox>
+  </div>
+
+  <div class="formulaire__actions">
+    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
+      <i class="pi pi-times"></i> Annuler
+    </button>
+    <button type="submit" class="bouton-primaire" [disabled]="enregistrement">
+      @if (enregistrement) {
+        <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+        <i class="pi pi-save"></i>
+      }
+      Enregistrer
+    </button>
+  </div>
+</form>

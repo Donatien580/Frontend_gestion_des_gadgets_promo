@@ -1,0 +1,158 @@
+<div class="approvisionnement-page">
+  <div class="approvisionnement-page__breadcrumb">
+    <p-breadcrumb [model]="items"></p-breadcrumb>
+  </div>
+
+  <p-card styleClass="approvisionnement-card">
+    <div class="approvisionnement-page__header">
+      <div class="approvisionnement-page__left">
+        <h2 class="approvisionnement-page__title">Approvisionnement Gadgets</h2>
+        <button
+          type="button"
+          class="bouton-primaire"
+          (click)="openModalCreate()">
+          <i class="pi pi-plus"></i>
+          Ajouter
+        </button>
+      </div>
+      <div class="approvisionnement-page__actions">
+        <div class="approvisionnement-page__search">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            [ngModel]="recherche"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Rechercher un approvisionnement..." />
+          @if (isSearching) {
+            <i
+              class="pi pi-spin pi-spinner approvisionnement-page__search-spinner"></i>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="approvisionnement-page__table">
+      <p-table
+        [value]="approvisionnements"
+        [paginator]="true"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [loading]="isLoading"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}"
+        responsiveLayout="scroll"
+        styleClass="approvisionnement-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date de réception</th>
+            <th>Fournisseur</th>
+            <th>N° PV</th>
+            <th>Lignes</th>
+            <th>Qualité</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template
+          pTemplate="body"
+          let-approvisionnement
+          let-rowIndex="rowIndex">
+          <tr>
+            <td class="tableau__cellule-forte">
+              {{ approvisionnement.dateReception | date: "dd/MM/yyyy" }}
+            </td>
+            <td>{{ approvisionnement.fournisseur }}</td>
+            <td>{{ approvisionnement.numeroPV || "—" }}</td>
+            <td>{{ approvisionnement.lignes.length }} gadget(s)</td>
+            <td>
+              <span [class]="getQualiteClasse(approvisionnement)">
+                @if (getQualiteClasse(approvisionnement) === "etiquette-ok") {
+                  <i class="pi pi-check-circle"></i>
+                }
+                @if (
+                  getQualiteClasse(approvisionnement) === "etiquette-alerte"
+                ) {
+                  <i class="pi pi-exclamation-triangle"></i>
+                }
+                @if (
+                  getQualiteClasse(approvisionnement) === "etiquette-danger"
+                ) {
+                  <i class="pi pi-times-circle"></i>
+                }
+                @if (
+                  getQualiteClasse(approvisionnement) === "etiquette-neutre"
+                ) {
+                  <i class="pi pi-minus-circle"></i>
+                }
+                {{ getQualite(approvisionnement) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  pTooltip="Afficher"
+                  tooltipPosition="top"
+                  (onClick)="openModalDetail(approvisionnement)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="empty-message">
+              <div class="empty-message__content">
+                <div class="empty-message__icon">
+                  <i class="pi pi-inbox"></i>
+                </div>
+                <strong>Aucun approvisionnement trouvé</strong>
+                <span>Commencez par ajouter un nouvel approvisionnement.</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog
+      header="Opérer un nouvel approvisionnement"
+      [(visible)]="createDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '900px' }">
+      <app-approvisionnement-formulaire
+        (annuler)="closeCreateDialog()"
+        (enregistre)="onApprovisionnementSaved()">
+      </app-approvisionnement-formulaire>
+    </p-dialog>
+
+    <p-dialog
+      header="Détails de l'approvisionnement"
+      [(visible)]="detailDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '800px' }">
+      <app-approvisionnement-detail
+        [approvisionnement]="approvisionnementSelectionne">
+      </app-approvisionnement-detail>
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Fermer"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="closeDetailDialog()">
+        </p-button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+</div>

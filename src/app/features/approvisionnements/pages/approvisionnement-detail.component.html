@@ -1,0 +1,200 @@
+<!-- @if (chargement) {
+  <p class="etat-chargement">Chargement…</p>
+} @else if (approvisionnement; as appro) {
+  <div class="fiche">
+    <dl class="fiche-info">
+      <div>
+        <dt>Fournisseur</dt>
+        <dd>{{ appro.fournisseur }}</dd>
+      </div>
+
+      <div>
+        <dt>Date de réception</dt>
+        <dd>
+          {{ appro.dateReception | date: "dd/MM/yyyy à HH:mm" }}
+        </dd>
+      </div>
+
+      <div>
+        <dt>N° de PV</dt>
+        <dd>
+          {{ appro.numeroPV || "—" }}
+        </dd>
+      </div>
+    </dl>
+
+    @if (appro.observations) {
+      <p class="fiche-observations">
+        {{ appro.observations }}
+      </p>
+    }
+  </div>
+
+  <h3 class="fiche-sous-titre">Gadgets réceptionnés</h3>
+
+  <table class="tableau">
+    <thead>
+      <tr>
+        <th>Gadget</th>
+        <th>Commandée</th>
+        <th>Reçue</th>
+        <th>Conforme</th>
+        <th>Défectueuse</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (ligne of appro.lignes; track ligne.idLigne) {
+        <tr>
+          <td class="tableau__cellule-forte">
+            {{ ligne.gadget.libelle }}
+          </td>
+
+          <td>
+            {{ ligne.quantiteCommandee ?? "—" }}
+          </td>
+
+          <td>
+            {{ ligne.quantiteRecue }}
+          </td>
+
+          <td>
+            @if (ligne.quantiteDefectueuse) {
+              <span class="valeur-alerte">
+                {{ ligne.quantiteDefectueuse }}
+              </span>
+            } @else {
+              0
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (appro.incidents.length > 0) {
+    <h3 class="fiche-sous-titre">Incidents qualité</h3>
+
+    <ul class="liste-incidents">
+      @for (incident of appro.incidents; track incident.idIncident) {
+        <li class="liste-incidents__item">
+          <div>
+            <p class="liste-incidents__description">
+              {{ incident.description }}
+            </p>
+
+            <span class="liste-incidents__date">
+              {{ incident.dateSignalement | date: "dd/MM/yyyy" }}
+            </span>
+          </div>
+
+          <span class="statut-decision"> Décision en attente </span>
+        </li>
+      }
+    </ul>
+  }
+} -->
+
+@if (chargement) {
+  <p class="etat-chargement">Chargement…</p>
+} @else if (approvisionnement; as appro) {
+  <!-- INFORMATIONS GÉNÉRALES-->
+  <div class="fiche">
+    <dl class="fiche-info">
+      <div>
+        <dt>Fournisseur</dt>
+        <dd>{{ appro.fournisseur }}</dd>
+      </div>
+
+      <div>
+        <dt>Date de réception</dt>
+        <dd>
+          {{ appro.dateReception | date: "dd/MM/yyyy à HH:mm" }}
+        </dd>
+      </div>
+
+      <div>
+        <dt>N° de PV</dt>
+        <dd>
+          {{ appro.numeroPV || "—" }}
+        </dd>
+      </div>
+    </dl>
+
+    @if (appro.observations) {
+      <p class="fiche-observations">
+        {{ appro.observations }}
+      </p>
+    }
+  </div>
+
+  <!-- GADGETS RÉCEPTIONNÉS-->
+  <h3 class="fiche-sous-titre">Gadgets réceptionnés</h3>
+
+  <table class="tableau">
+    <thead>
+      <tr>
+        <th>Gadget</th>
+        <th>Commandée</th>
+        <th>Reçue</th>
+        <th>Conforme</th>
+        <th>Défectueuse</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (ligne of appro.lignes; track ligne.idLigne) {
+        <tr>
+          <td class="tableau__cellule-forte">
+            {{ ligne.gadget.libelle }}
+          </td>
+
+          <td>
+            {{ ligne.quantiteCommandee ?? "—" }}
+          </td>
+
+          <td>
+            {{ ligne.quantiteRecue }}
+          </td>
+
+          <td>
+            {{ ligne.quantiteRecue - (ligne.quantiteDefectueuse ?? 0) }}
+          </td>
+
+          <td>
+            @if (ligne.quantiteDefectueuse) {
+              <span class="valeur-alerte">
+                {{ ligne.quantiteDefectueuse }}
+              </span>
+            } @else {
+              0
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- INCIDENTS -->
+  @if (appro.incidents.length > 0) {
+    <h3 class="fiche-sous-titre">Incidents qualité</h3>
+
+    <ul class="liste-incidents">
+      @for (incident of appro.incidents; track incident.idIncident) {
+        <li class="liste-incidents__item">
+          <div>
+            <p class="liste-incidents__description">
+              {{ incident.description }}
+            </p>
+
+            <span class="liste-incidents__date">
+              {{ incident.dateSignalement | date: "dd/MM/yyyy" }}
+            </span>
+          </div>
+
+          <span class="statut-decision"> Décision en attente </span>
+        </li>
+      }
+    </ul>
+  }
+}

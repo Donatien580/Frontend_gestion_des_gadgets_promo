@@ -1,0 +1,102 @@
+<aside class="menu-lateral" [class.menu-lateral--collapsed]="reduit">
+  <div class="menu-lateral__brand">
+    <div class="menu-lateral__logo">
+      <img src="images/Logo_SONABEL.png" alt="Logo SONABEL" />
+    </div>
+
+    @if (!reduit) {
+      <div class="menu-lateral__brand-text">
+        <span class="menu-lateral__brand-title"> Gadgets DCM </span>
+
+        <span class="menu-lateral__brand-subtitle">
+          Gestion &amp; distribution
+        </span>
+      </div>
+    }
+  </div>
+
+  <nav class="menu-lateral__nav scrollbar-slim">
+    @for (groupe of groupesMenu; track groupe.titre) {
+      @if (groupe.titre && !reduit) {
+        <span class="menu-lateral__groupe-titre">
+          {{ groupe.titre }}
+        </span>
+      }
+
+      @if (groupe.titre && reduit) {
+        <div class="menu-lateral__groupe-separateur"></div>
+      }
+
+      @for (element of groupe.elements; track element.libelle) {
+        @if (element.enfants?.length) {
+          <button
+            type="button"
+            class="menu-lateral__link menu-lateral__link--parent"
+            [class.menu-lateral__link--open]="element.ouvert"
+            [title]="reduit ? element.libelle : ''"
+            (click)="basculerSousMenu(element)">
+            <i class="menu-lateral__icone" [class]="element.icone"> </i>
+
+            @if (!reduit) {
+              <span class="menu-lateral__label">
+                {{ element.libelle }}
+              </span>
+
+              <i
+                class="pi menu-lateral__chevron"
+                [class.pi-chevron-down]="element.ouvert"
+                [class.pi-chevron-right]="!element.ouvert">
+              </i>
+            }
+          </button>
+
+          @if (element.ouvert && !reduit) {
+            <div class="menu-lateral__submenu">
+              @for (enfant of element.enfants; track enfant.libelle) {
+                <a
+                  class="menu-lateral__sublink"
+                  [routerLink]="enfant.route"
+                  routerLinkActive="menu-lateral__sublink--active"
+                  [routerLinkActiveOptions]="{ exact: true }">
+                  <i class="menu-lateral__subicone" [class]="enfant.icone"> </i>
+
+                  <span class="menu-lateral__sublabel">
+                    {{ enfant.libelle }}
+                  </span>
+                </a>
+              }
+            </div>
+          }
+
+        } @else {
+          <a
+            class="menu-lateral__link"
+            [routerLink]="element.route"
+            routerLinkActive="menu-lateral__link--active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [title]="reduit ? element.libelle : ''">
+            <i class="menu-lateral__icone" [class]="element.icone"> </i>
+
+            @if (!reduit) {
+              <span class="menu-lateral__label">
+                {{ element.libelle }}
+              </span>
+            }
+          </a>
+        }
+      }
+    }
+  </nav>
+
+  <button
+    class="menu-lateral__toggle"
+    type="button"
+    (click)="basculer()"
+    [attr.aria-label]="reduit ? 'Agrandir le menu' : 'Réduire le menu'">
+    <i
+      class="pi"
+      [class.pi-angle-left]="!reduit"
+      [class.pi-angle-right]="reduit">
+    </i>
+  </button>
+</aside>

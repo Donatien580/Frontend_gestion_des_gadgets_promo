@@ -1,0 +1,45 @@
+.etat-vide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-16) var(--space-6);
+  color: var(--color-text-secondary);
+}
+
+.etat-vide__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary-50);
+  color: var(--color-primary-400);
+  font-size: 28px;
+  margin-bottom: var(--space-4);
+}
+
+.etat-vide__titre {
+  margin-bottom: var(--space-2);
+}
+
+.etat-vide__message {
+  max-width: 420px;
+  margin-bottom: var(--space-4);
+}
+
+.etat-vide__action {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--color-primary-500);
+  color: var(--color-surface-0);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover { background: var(--color-primary-600); }
+  &:focus-visible { outline: 2px solid var(--color-primary-700); outline-offset: 2px; }
+}

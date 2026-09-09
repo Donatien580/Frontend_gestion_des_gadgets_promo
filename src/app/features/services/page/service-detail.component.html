@@ -1,0 +1,27 @@
+@if (service) {
+  <div class="detail-service">
+    <div class="detail-service__header">
+      <h3>{{ service.codeService }} - {{ service.libelleService }}</h3>
+    </div>
+    <div class="detail-service__corps">
+      <div>
+        <p>
+          <strong>Matricule responsable:</strong>
+          {{ service.matriculeResponsable }}
+        </p>
+        <p><strong>Responsable :</strong> {{ service.nomResponsable }}</p>
+        <p>
+          <strong>Téléphone :</strong> {{ service.telephoneResponsable || "—" }}
+        </p>
+      </div>
+      @if (service.personnels?.length) {
+        <h4>Personnels associés</h4>
+        <ul>
+          @for (personnel of service.personnels; track personnel.idPersonnel) {
+            <li>{{ personnel.nom }} {{ personnel.prenom }}</li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+}

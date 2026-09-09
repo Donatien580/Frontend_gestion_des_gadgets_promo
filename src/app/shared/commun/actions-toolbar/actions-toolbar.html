@@ -1,0 +1,134 @@
+<div>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-eye"
+    label=""
+    pTooltip="Détail"
+    appendTo="body"
+    class="p-button-raised p-button-info mr-2"
+    *ngIf="enableBtnInfo"
+    (click)="fireInfo()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-pencil"
+    label=""
+    pTooltip="Modifier"
+    appendTo="body"
+    class="p-button-raised p-button-success mr-2"
+    *ngIf="enableBtnEdit"
+    (click)="fireEdit()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-trash"
+    label=""
+    class="p-button-raised p-button-danger mr-2"
+    pTooltip="Supprimer"
+    appendTo="body"
+    *ngIf="enableBtnDelete"
+    (click)="fireDelete()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-bookmark"
+    label="Privileges"
+    class="p-button-raised p-button-secondary mr-2"
+    pTooltip="Privileges"
+    appendTo="body"
+    *ngIf="enableBtnPrivilege"
+    (click)="firePrivilege()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-lock"
+    label=""
+    class="p-button-raised p-button-secondary mr-2"
+    pTooltip="Cloturer"
+    appendTo="body"
+    *ngIf="enableBtnClose"
+    (click)="fireClose()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-send"
+    label=""
+    class="p-button-raised p-button-secondary mr-2"
+    pTooltip="Renvoie du mail"
+    appendTo="body"
+    *ngIf="enableBtnEmail"
+    (click)="fireEmail()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-send"
+    label=""
+    class="p-button-raised p-button-success mr-2"
+    pTooltip="Traiter"
+    appendTo="body"
+    *ngIf="enableBtnTreat"
+    (click)="fireTreat()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-chart-line"
+    label=""
+    class="p-button-raised p-button-success mr-2"
+    pTooltip="Evaluer"
+    appendTo="body"
+    *ngIf="enableBtnEval"
+    (click)="fireEvaluer()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-undo"
+    label=""
+    class="p-button-raised p-button-success mr-2"
+    pTooltip="Changer"
+    appendTo="body"
+    *ngIf="enableBtnChanger"
+    (click)="fireChanger()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-download"
+    label=""
+    class="p-button-raised p-button-info mr-2"
+    pTooltip="Telecharger"
+    appendTo="body"
+    *ngIf="enableBtnTelecharger"
+    (click)="fireTelecharger()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-folder"
+    label=""
+    class="p-button-raised p-button-warning mr-2"
+    pTooltip="Dossier"
+    appendTo="body"
+    *ngIf="enableBtnDossier"
+    (click)="fireDossier()"></button>
+  <button
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-sitemap"
+    label=""
+    class="p-button-raised p-button-warning mr-2"
+    pTooltip="Circuit"
+    appendTo="body"
+    *ngIf="enableBtnCircuit"
+    (click)="fireCircuit()"></button>
+</div>

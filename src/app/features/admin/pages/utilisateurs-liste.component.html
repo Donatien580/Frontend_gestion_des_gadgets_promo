@@ -1,0 +1,47 @@
+<div class="page">
+  <app-en-tete-page module="admin" sousTitre="Gérez les comptes qui accèdent à l'application et leur rôle.">
+    <button type="button" class="bouton-primaire">
+      <i class="pi pi-plus"></i>
+      Nouvel utilisateur
+    </button>
+  </app-en-tete-page>
+
+  <div class="panneau">
+    <table class="tableau">
+      <thead>
+        <tr>
+          <th>Utilisateur</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (utilisateur of utilisateurs; track utilisateur.email) {
+          <tr>
+            <td>
+              <div class="tableau__utilisateur">
+                <span class="tableau__avatar">{{ utilisateur.initiales }}</span>
+                {{ utilisateur.nomComplet }}
+              </div>
+            </td>
+            <td>{{ utilisateur.email }}</td>
+            <td>{{ utilisateur.role }}</td>
+            <td>
+              <app-badge-statut [etat]="utilisateur.actif ? 'ACTIF' : 'INACTIF'" />
+            </td>
+            <td class="tableau__actions">
+              <button type="button" class="bouton-icone bouton-icone--modifier" aria-label="Modifier">
+                <i class="pi pi-pencil"></i>
+              </button>
+              <button type="button" class="bouton-icone" aria-label="Désactiver">
+                <i class="pi pi-ban"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

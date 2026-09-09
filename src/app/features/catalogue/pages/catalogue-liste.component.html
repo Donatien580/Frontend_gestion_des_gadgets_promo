@@ -1,0 +1,365 @@
+<div class="catalogue-page">
+  <div class="catalogue-page__breadcrumb">
+    <p-breadcrumb [model]="items"></p-breadcrumb>
+  </div>
+  <p-card styleClass="catalogue-card">
+    <div class="catalogue-page__header">
+      <div class="catalogue-page__heading">
+        <h2>Catalogue des gadgets</h2>
+
+        <p-button
+          label="Ajouter"
+          icon="pi pi-plus"
+          severity="primary"
+          (onClick)="openModalCreate()">
+        </p-button>
+      </div>
+      <div class="catalogue-page__actions">
+        <div class="catalogue-page__search">
+          <i class="pi pi-search"></i>
+
+          <input
+            type="text"
+            pInputText
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Rechercher une catégorie..." />
+        </div>
+      </div>
+    </div>
+
+    <!--FILTRES-->
+
+    <div class="catalogue-filtres">
+      <div class="catalogue-filtre">
+        <label for="categorie"> Catégorie </label>
+
+        <select
+          id="categorie"
+          [(ngModel)]="idCategorieFiltre"
+          (change)="filtrerParCategorie()">
+          <option [ngValue]="null">Toutes les catégories</option>
+
+          @for (categorie of categories; track categorie.idCategorie) {
+            <option [ngValue]="categorie.idCategorie">
+              {{ categorie.libelle }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <label class="catalogue-checkbox">
+        <input
+          type="checkbox"
+          [(ngModel)]="afficherInactifs"
+          (change)="changerAffichageInactifs()" />
+
+        Afficher les gadgets inactifs
+      </label>
+    </div>
+
+    <!--ABLEAU-->
+
+    <div class="catalogue-table">
+      <p-table
+        #dt
+        [value]="gadgets"
+        [paginator]="true"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [loading]="isLoading"
+        [globalFilterFields]="['libelle', 'designation', 'categorie']"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}"
+        responsiveLayout="scroll"
+        styleClass="catalogue-table__content">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 80px">Photo</th>
+
+            <th pSortableColumn="libelle">
+              <div class="table-header-cell">
+                <span>Gadget</span>
+                <p-sortIcon field="libelle"></p-sortIcon>
+              </div>
+            </th>
+
+            <th pSortableColumn="designation">
+              <div class="table-header-cell">
+                <span>Désignation</span>
+                <p-sortIcon field="designation"></p-sortIcon>
+              </div>
+            </th>
+
+            <th pSortableColumn="categorie">
+              <div class="table-header-cell">
+                <span>Catégorie</span>
+                <p-sortIcon field="categorie"></p-sortIcon>
+              </div>
+            </th>
+
+            <th>Stock</th>
+
+            <th>Seuil</th>
+
+            <th>Statut</th>
+
+            <th style="width: 150px; text-align: center">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-gadget>
+          <tr>
+            <td>
+              @if (gadget.photoGadget) {
+                <img
+                  [src]="gadget.photoGadget | urlPhoto"
+                  [alt]="gadget.libelle"
+                  class="gadget-photo" />
+              } @else {
+                <div class="gadget-photo gadget-photo--vide">
+                  <i class="pi pi-image"></i>
+                </div>
+              }
+            </td>
+
+            <!-- LIBELLÉ -->
+
+            <td>
+              <strong>
+                {{ gadget.libelle }}
+              </strong>
+
+              @if (gadget.description) {
+                <small>
+                  {{ gadget.description }}
+                </small>
+              }
+            </td>
+
+            <!-- DÉSIGNATION -->
+
+            <td>
+              {{ gadget.designation || "—" }}
+            </td>
+
+            <!-- CATÉGORIE -->
+
+            <td>
+              {{ gadget.categorie?.libelle || "—" }}
+            </td>
+
+            <!-- STOCK -->
+
+            <td>
+              <span [class.stock--alerte]="gadget.sousSeuilAlerte">
+                {{ gadget.quantiteDisponible }}
+              </span>
+
+              unités
+            </td>
+
+            <!-- SEUIL -->
+
+            <td>
+              {{ gadget.seuilAlerte }}
+            </td>
+
+            <!-- STATUT -->
+
+            <td>
+              <span
+                class="statut"
+                [class.statut--actif]="gadget.actif && !gadget.sousSeuilAlerte"
+                [class.statut--alerte]="gadget.actif && gadget.sousSeuilAlerte"
+                [class.statut--inactif]="!gadget.actif">
+                {{ getStatut(gadget) }}
+              </span>
+            </td>
+
+            <!-- ACTIONS -->
+
+            <td>
+              <div class="actions-cell">
+                <!-- Voir -->
+
+                <p-button
+                  icon="pi pi-eye"
+                  severity="info"
+                  [text]="true"
+                  pTooltip="Afficher"
+                  tooltipPosition="top"
+                  (onClick)="openModalDetail(gadget)">
+                </p-button>
+
+                <!-- Modifier -->
+
+                <p-button
+                  icon="pi pi-pencil"
+                  severity="warn"
+                  [text]="true"
+                  pTooltip="Modifier"
+                  tooltipPosition="top"
+                  (onClick)="openModalEdit(gadget)">
+                </p-button>
+
+                <!-- Activer / Désactiver -->
+
+                <p-button
+                  [icon]="gadget.actif ? 'pi pi-ban' : 'pi pi-check'"
+                  [severity]="gadget.actif ? 'danger' : 'success'"
+                  [text]="true"
+                  [pTooltip]="gadget.actif ? 'Désactiver' : 'Activer'"
+                  tooltipPosition="top"
+                  (onClick)="changerStatut(gadget)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- AUCUNE DONNÉE -->
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="empty-message">
+              <i class="pi pi-box"></i>
+
+              <p>Aucun gadget trouvé.</p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- PAGINATION-->
+      <!-- <p-paginator
+        [first]="currentPage * recordsPerPage"
+        [rows]="recordsPerPage"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        (onPageChange)="changerPage($event)">
+      </p-paginator> -->
+    </div>
+
+    <!--MODAL AJOUT-->
+    <p-dialog
+      header="Ajouter un gadget"
+      [(visible)]="createDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '650px' }">
+      <app-gadget-formulaire
+        [idGadget]="null"
+        (annuler)="fermerFormulaire()"
+        (enregistre)="onGadgetSaved()">
+      </app-gadget-formulaire>
+    </p-dialog>
+
+    <!--MODAL MODIFICATION-->
+    <p-dialog
+      header="Modifier le gadget"
+      [(visible)]="editDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '650px' }">
+      <app-gadget-formulaire
+        [idGadget]="idGadgetEnEdition"
+        (annuler)="fermerFormulaire()"
+        (enregistre)="onGadgetSaved()">
+      </app-gadget-formulaire>
+    </p-dialog>
+
+    <!--MODAL DÉTAIL -->
+    <p-dialog
+      header="Détails du gadget"
+      [(visible)]="detailDialogVisible"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '600px' }">
+      @if (gadget) {
+        @if (gadget.photoGadget) {
+          <div class="image-container">
+            <img
+              [src]="gadget.photoGadget | urlPhoto"
+              [alt]="gadget.libelle"
+              class="gadget-photo" />
+          </div>
+        }
+
+        <div class="gadget-details">
+          <div class="gadget-details__ligne">
+            <span>Libellé</span>
+
+            <strong>
+              {{ gadget.libelle }}
+            </strong>
+          </div>
+
+          <div class="gadget-details__ligne">
+            <span>Désignation</span>
+
+            <strong>
+              {{ gadget.designation || "—" }}
+            </strong>
+          </div>
+
+          <div class="gadget-details__ligne">
+            <span>Catégorie</span>
+
+            <strong>
+              {{ gadget.categorie?.libelle || "—" }}
+            </strong>
+          </div>
+
+          <div class="gadget-details__ligne">
+            <span>Stock disponible</span>
+
+            <strong>
+              {{ gadget.quantiteDisponible }}
+            </strong>
+          </div>
+
+          <div class="gadget-details__ligne">
+            <span>Seuil d'alerte</span>
+
+            <strong>
+              {{ gadget.seuilAlerte }}
+            </strong>
+          </div>
+
+          <div class="gadget-details__ligne">
+            <span>Statut</span>
+
+            <strong>
+              {{ getStatut(gadget) }}
+            </strong>
+          </div>
+
+          @if (gadget.description) {
+            <div class="gadget-details__description">
+              <span>Description</span>
+
+              <p>
+                {{ gadget.description }}
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Fermer"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="detailDialogVisible = false">
+        </p-button>
+      </ng-template>
+    </p-dialog>
+  </p-card>
+
+  <app-confirmation></app-confirmation>
+</div>

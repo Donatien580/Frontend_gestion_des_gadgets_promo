@@ -1,0 +1,36 @@
+@if (totalElements > 0) {
+  <div class="pagination">
+    <span class="pagination__resume">
+      Affichage {{ debut }} à {{ fin }} sur {{ totalElements }}
+    </span>
+
+    <div class="pagination__navigation">
+      <button type="button" class="pagination__bouton" [disabled]="pageCourante === 0" (click)="allerA(0)" aria-label="Première page">
+        <i class="pi pi-angle-double-left"></i>
+      </button>
+      <button type="button" class="pagination__bouton" [disabled]="pageCourante === 0" (click)="allerA(pageCourante - 1)" aria-label="Page précédente">
+        <i class="pi pi-angle-left"></i>
+      </button>
+
+      <span class="pagination__numero">{{ pageCourante + 1 }}</span>
+
+      <button type="button" class="pagination__bouton" [disabled]="pageCourante + 1 >= totalPages" (click)="allerA(pageCourante + 1)" aria-label="Page suivante">
+        <i class="pi pi-angle-right"></i>
+      </button>
+      <button type="button" class="pagination__bouton" [disabled]="pageCourante + 1 >= totalPages" (click)="allerA(totalPages - 1)" aria-label="Dernière page">
+        <i class="pi pi-angle-double-right"></i>
+      </button>
+    </div>
+
+    <select
+      class="pagination__taille"
+      [ngModel]="taillePage"
+      (ngModelChange)="surChangementTaille($event)"
+      aria-label="Nombre de lignes par page"
+    >
+      @for (taille of optionsTaille; track taille) {
+        <option [ngValue]="taille">{{ taille }}</option>
+      }
+    </select>
+  </div>
+}
