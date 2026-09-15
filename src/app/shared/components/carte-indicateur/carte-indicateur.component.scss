@@ -1,12 +1,18 @@
 .carte-indicateur {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
-  padding: var(--space-6);
+  flex-direction: column;
   background: var(--color-surface-0);
   border: 1px solid var(--color-surface-200);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  overflow: hidden; /* le footer garde les coins arrondis de la carte */
+}
+
+.carte-indicateur__corps {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-6);
 }
 
 .carte-indicateur__icone {
@@ -20,12 +26,56 @@
   flex-shrink: 0;
 }
 
-.carte-indicateur--primary .carte-indicateur__icone { background: var(--color-primary-50); color: var(--color-primary-600); }
-.carte-indicateur--success .carte-indicateur__icone { background: #e7f8f1; color: var(--color-success); }
-.carte-indicateur--warning .carte-indicateur__icone { background: #fdf3e2; color: var(--color-warning); }
-.carte-indicateur--danger  .carte-indicateur__icone { background: #fbe9e8; color: var(--color-danger); }
+.carte-indicateur--primary .carte-indicateur__icone {
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+}
+.carte-indicateur--success .carte-indicateur__icone {
+  background: #e7f8f1;
+  color: var(--color-success);
+}
+.carte-indicateur--warning .carte-indicateur__icone {
+  background: #fdf3e2;
+  color: var(--color-warning);
+}
+.carte-indicateur--danger .carte-indicateur__icone {
+  background: #fbe9e8;
+  color: var(--color-danger);
+}
 
-.carte-indicateur__corps {
+.carte-indicateur {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.carte-indicateur:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated, 0 12px 28px rgba(0, 0, 0, 0.1));
+}
+
+.carte-indicateur--primary:hover {
+  border-color: var(--color-primary-300);
+}
+.carte-indicateur--success:hover {
+  border-color: #86e0bb;
+}
+.carte-indicateur--warning:hover {
+  border-color: #f6cf8a;
+}
+.carte-indicateur--danger:hover {
+  border-color: #f3b0ac;
+}
+
+.carte-indicateur__texte {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -43,15 +93,39 @@
   color: var(--color-text-primary);
 }
 
+/* ---- Footer : bande colorée assortie à l'accent de la carte ---- */
+.carte-indicateur__footer {
+  padding: var(--space-3) var(--space-6);
+  border-top: 1px solid var(--color-surface-100);
+}
+
+.carte-indicateur--primary .carte-indicateur__footer {
+  background: var(--color-primary-50);
+}
+.carte-indicateur--success .carte-indicateur__footer {
+  background: #e7f8f1;
+}
+.carte-indicateur--warning .carte-indicateur__footer {
+  background: #fdf3e2;
+}
+.carte-indicateur--danger .carte-indicateur__footer {
+  background: #fbe9e8;
+}
+
 .carte-indicateur__tendance {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: var(--font-size-micro);
   font-weight: 600;
-  margin-top: var(--space-1);
 
-  &--hausse { color: var(--color-success); }
-  &--baisse { color: var(--color-danger); }
-  &--neutre { color: var(--color-text-muted); }
+  &--hausse {
+    color: var(--color-success);
+  }
+  &--baisse {
+    color: var(--color-danger);
+  }
+  &--neutre {
+    color: var(--color-text-muted);
+  }
 }

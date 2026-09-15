@@ -6,7 +6,11 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { Approvisionnement } from "../../../core/models";
 import { ApprovisionnementService } from "../services/approvisionnement.service";
 import { ApprovisionnementFormulaireComponent } from "./approvisionnement-formulaire.component";
-import { ApprovisionnementDetailComponent } from "./approvisionnement-detail.component";
+import {
+  ApprovisionnementDetailComponent,
+  LigneCorrigeeEvent,
+} from "./approvisionnement-detail.component";
+import { NotificationService } from "../../../core/services/notification.service";
 import { MenuItem } from "primeng/api";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
@@ -52,7 +56,10 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private searchSubscription?: Subscription;
 
-  constructor(private approvisionnementService: ApprovisionnementService) {}
+  constructor(
+    private approvisionnementService: ApprovisionnementService,
+    private notification: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.menuTool();
@@ -77,10 +84,7 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
         icon: "pi pi-home",
         routerLink: ["/admin/dashboard"],
       },
-      {
-        label: "Approvisionnement",
-        icon: "pi pi-box",
-      },
+      { label: "Approvisionnement", icon: "pi pi-box" },
     ];
   }
 
@@ -100,7 +104,6 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
         seconde = 0,
         nanosecondes = 0,
       ] = date;
-
       return new Date(
         annee,
         mois - 1,
@@ -130,15 +133,12 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
     if (approvisionnement.lignes.length === 0) {
       return "Non évalué";
     }
-
     if (totalDefectueux === 0) {
       return "Conforme";
     }
-
     if (totalDefectueux === approvisionnement.lignes.length) {
       return "Tous défectueux";
     }
-
     return `${totalDefectueux} défectueux`;
   }
 
@@ -148,15 +148,12 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
     if (approvisionnement.lignes.length === 0) {
       return "etiquette-neutre";
     }
-
     if (totalDefectueux === 0) {
       return "etiquette-ok";
     }
-
     if (totalDefectueux === approvisionnement.lignes.length) {
       return "etiquette-danger";
     }
-
     return "etiquette-alerte";
   }
 
@@ -231,6 +228,33 @@ export class ApprovisionnementsListeComponent implements OnInit, OnDestroy {
   onApprovisionnementSaved(): void {
     this.createDialogVisible = false;
     this.loadAll();
+  }
+
+  /* APRÈS CORRECTION D'UNE LIGNE */
+  onLigneCorrigee(evenement: LigneCorrigeeEvent): void {
+    this.approvisionnementService
+      .corriger(evenement.idApprovisionnement, evenement.requete)
+      .subscribe({
+        next: (approvisionnementMisAJour) => {
+          this.notification.success("Ligne corrigée avec succès.");
+          this.approvisionnementSelectionne = {
+            ...approvisionnementMisAJour,
+            dateReception: this.convertirDate(
+              approvisionnementMisAJour.dateReception,
+            ) as any,
+          };
+          this.loadAll();
+        },
+        error: (error) => {
+          console.error(
+            "Erreur lors de la correction de l'approvisionnement",
+            error,
+          );
+          this.notification.error(
+            "Erreur lors de la correction de l'approvisionnement.",
+          );
+        },
+      });
   }
 
   /* FERMER MODAL DÉTAIL */

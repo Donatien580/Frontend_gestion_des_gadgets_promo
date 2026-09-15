@@ -126,7 +126,7 @@
   padding: 0 1rem;
   border: none;
   border-radius: 0;
-  background: #22c55e;
+  background: #1889e5;
   color: #ffffff;
   font-size: 0.8rem;
   font-weight: 600;
@@ -138,11 +138,11 @@
   }
 
   &:hover {
-    background: #16a34a;
+    background: #1664a3;
   }
 
   &:focus-visible {
-    outline: 2px solid #16a34a;
+    outline: 2px solid #095a8d;
     outline-offset: 2px;
   }
 }

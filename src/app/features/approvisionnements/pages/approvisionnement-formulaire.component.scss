@@ -173,8 +173,13 @@
 }
 
 .bouton-enregistrer {
-  background: #2563eb;
+  background: #2eb314;
   color: white;
+}
+
+.required {
+  color: #dc2626;
+  font-weight: 600;
 }
 
 .bouton-enregistrer:disabled {

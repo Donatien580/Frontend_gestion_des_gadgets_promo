@@ -91,3 +91,133 @@
   border: 1px solid #ffe69c;
   white-space: nowrap;
 }
+
+/* =========================================================
+   ÉTIQUETTE DE STATUT (ENREGISTRE / CORRIGE)
+   ========================================================= */
+
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.etiquette-ok {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.etiquette-alerte {
+  background: #fefce8;
+  color: #a16207;
+  border-color: #fde68a;
+}
+
+/* =========================================================
+   CORRECTION DE SAISIE
+   ========================================================= */
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.champ label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.champ input {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.champ--etroit {
+  max-width: 140px;
+}
+
+.valeur-calculee {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 0.75rem;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.ligne-correction td {
+  padding: 0 !important;
+}
+
+.formulaire-correction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+  padding: var(--space-4);
+  margin: 0.5rem 0;
+  background: #fffbeb;
+  border: 1px dashed #fde68a;
+  border-radius: var(--radius-sm);
+}
+
+.formulaire-correction__motif {
+  flex: 1;
+  min-width: 220px;
+}
+
+.formulaire-correction__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.bouton-annuler,
+.bouton-enregistrer {
+  padding: 0.55rem 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.bouton-annuler {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.bouton-enregistrer {
+  background: #2563eb;
+  color: white;
+}
+
+.bouton-enregistrer:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tableau--historique {
+  opacity: 0.85;
+}
+
+.ligne-desactivee td {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.ligne-desactivee td:last-child {
+  text-decoration: none;
+  font-style: italic;
+}

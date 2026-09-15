@@ -7,11 +7,17 @@
     <div class="categories-page__header">
       <div class="categories-page__left">
         <h2 class="categories-page__title">Liste des catégories</h2>
-        <p-button
+        <!-- <p-button
           label="Ajouter"
           icon="pi pi-plus"
           severity="primary"
-          (onClick)="openModalCreate()"></p-button>
+          (onClick)="openModalCreate()"></p-button> -->
+        <button
+          type="button"
+          class="bouton-primaire"
+          (click)="openModalCreate()">
+          <i class="pi pi-plus"></i> Ajouter une catégorie
+        </button>
       </div>
       <div class="categories-page__actions">
         <div class="categories-page__search">
@@ -147,7 +153,9 @@
       [style]="{ width: '450px' }">
       <div class="categorie-form">
         <div class="field">
-          <label for="create-libelle">Libellé *</label>
+          <label for="create-libelle"
+            >Libellé <span class="required">*</span></label
+          >
           <input
             id="create-libelle"
             type="text"
@@ -173,11 +181,15 @@
           severity="secondary"
           [text]="true"
           (onClick)="closeCreateDialog()"></p-button>
+
         <p-button
+          [disabled]="isSaving"
+          icon="pi pi-save"
           label="Enregistrer"
-          icon="pi pi-check"
-          [loading]="isSaving"
-          (onClick)="save()"></p-button>
+          [raised]="true"
+          severity="success"
+          (click)="save()">
+        </p-button>
       </ng-template>
     </p-dialog>
 
@@ -190,7 +202,9 @@
       [style]="{ width: '450px' }">
       <div class="categorie-form">
         <div class="field">
-          <label for="edit-libelle">Libellé *</label>
+          <label for="edit-libelle"
+            >Libellé <span class="required">*</span></label
+          >
           <input
             id="edit-libelle"
             type="text"
@@ -214,11 +228,14 @@
           severity="secondary"
           [text]="true"
           (onClick)="closeEditDialog()"></p-button>
+
         <p-button
+          [disabled]="isSaving"
+          icon="pi pi-save"
           label="Enregistrer"
-          icon="pi pi-check"
-          [loading]="isSaving"
-          (onClick)="update()"></p-button>
+          [raised]="true"
+          severity="success"
+          (click)="update()"></p-button>
       </ng-template>
     </p-dialog>
 

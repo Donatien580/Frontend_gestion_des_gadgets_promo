@@ -1,70 +1,18 @@
-<!-- <div [formGroup]="formulaire" class="formulaire">
-  <div class="champ">
-    <label for="idDemande">Demande acceptée *</label>
-    <select
-      id="idDemande"
-      formControlName="idDemande"
-      (change)="onDemandeSelected($any($event.target).value)">
-      <option [ngValue]="null" disabled>Sélectionner une demande…</option>
-      @for (demande of demandesAcceptees; track demande.idDemande) {
-        <option [ngValue]="demande.idDemande">
-          {{ demande.numeroDemande }} - {{ demande.objet }}
-        </option>
-      }
-    </select>
-  </div>
-
-  <div class="formulaire__ligne">
-    <div class="champ champ--etroit">
-      <label for="dateDistribution">Date distribution</label>
-      <input
-        id="dateDistribution"
-        type="datetime-local"
-        formControlName="dateDistribution" />
-    </div>
-    <div class="champ">
-      <label for="destinataire">Destinataire (auto)</label>
-      <input
-        id="destinataire"
-        type="text"
-        formControlName="destinataire"
-        [disabled]="true" />
-    </div>
-  </div>
-
-  <div class="champ">
-    <label for="motif">Motif</label>
-    <textarea id="motif" formControlName="motif" rows="2"></textarea>
-  </div>
-
-  <div class="formulaire__actions">
-    <button type="button" class="bouton-secondaire" (click)="annuler.emit()">
-      Annuler
-    </button>
-    <button
-      type="button"
-      class="bouton-primaire"
-      (click)="enregistrer()"
-      [disabled]="enregistrement">
-      @if (enregistrement) {
-        <i class="pi pi-spin pi-spinner"></i>
-      } @else {
-        <i class="pi pi-save"></i>
-      }
-      Enregistrer
-    </button>
-  </div>
-</div> -->
-
 <div [formGroup]="formulaire" class="formulaire">
   <div class="champ">
-    <label for="idDemande">Demande acceptée *</label>
+    <label for="idDemande"
+      >Demande affectée (optionnel — laisser vide pour une dotation)</label
+    >
     <select
       id="idDemande"
       formControlName="idDemande"
-      (ngModelChange)="onDemandeSelected($event)">
-      <option [ngValue]="null" disabled>Sélectionner une demande…</option>
-      @for (demande of demandesAcceptees; track demande.idDemande) {
+      (change)="
+        onDemandeSelected(
+          $any($event.target).value ? +$any($event.target).value : null
+        )
+      ">
+      <option [ngValue]="null">— Dotation (sans demande) —</option>
+      @for (demande of demandesAffectees; track demande.idDemande) {
         <option [ngValue]="demande.idDemande">
           {{ demande.numeroDemande }} - {{ demande.objet }}
         </option>
@@ -74,26 +22,148 @@
 
   <div class="formulaire__ligne">
     <div class="champ champ--etroit">
+      <label for="typeDistribution">Type *</label>
+      <select
+        id="typeDistribution"
+        formControlName="typeDistribution"
+        [disabled]="!estDotation">
+        <option value="INTERNE">Interne</option>
+        <option value="EXTERNE">Externe</option>
+      </select>
+    </div>
+    <div class="champ champ--etroit">
       <label for="dateDistribution">Date distribution</label>
       <input
         id="dateDistribution"
         type="datetime-local"
         formControlName="dateDistribution" />
     </div>
-    <div class="champ">
-      <label for="destinataire">Destinataire (auto)</label>
-      <input
-        id="destinataire"
-        type="text"
-        formControlName="destinataire"
-        readonly />
-    </div>
   </div>
+
+  @if (type === "INTERNE") {
+    <h3>Réceptionnaire</h3>
+    <div class="formulaire__ligne">
+      <div class="champ">
+        <label for="nomReceptionnaire">Nom *</label>
+        <p-autoComplete
+          inputId="nomReceptionnaire"
+          formControlName="nomReceptionnaire"
+          [suggestions]="suggestionsNoms"
+          (completeMethod)="rechercherNoms($event)"
+          [dropdown]="false"
+          placeholder="Saisir ou choisir un nom"
+          styleClass="w-full" />
+      </div>
+      <div class="champ">
+        <label for="prenomReceptionnaire">Prénom</label>
+        <p-autoComplete
+          inputId="prenomReceptionnaire"
+          formControlName="prenomReceptionnaire"
+          [suggestions]="suggestionsPrenoms"
+          (completeMethod)="rechercherPrenoms($event)"
+          [dropdown]="false"
+          placeholder="Saisir ou choisir un prénom"
+          styleClass="w-full" />
+      </div>
+    </div>
+    <div class="formulaire__ligne">
+      <div class="champ champ--etroit">
+        <label for="matriculeReceptionnaire">Matricule</label>
+        <input
+          id="matriculeReceptionnaire"
+          type="text"
+          formControlName="matriculeReceptionnaire" />
+      </div>
+      <div class="champ">
+        <label for="serviceReceptionnaire">Service</label>
+        <p-autoComplete
+          inputId="serviceReceptionnaire"
+          formControlName="serviceReceptionnaire"
+          [suggestions]="suggestionsServices"
+          (completeMethod)="rechercherServices($event)"
+          [dropdown]="false"
+          placeholder="Saisir ou choisir un service"
+          styleClass="w-full" />
+      </div>
+      <div class="champ champ--etroit">
+        <label for="nombrePersonnes">Nb. personnes</label>
+        <input
+          id="nombrePersonnes"
+          type="number"
+          min="1"
+          formControlName="nombrePersonnes" />
+      </div>
+    </div>
+  } @else {
+    <div class="champ">
+      <label for="destinataire">Destinataire *</label>
+      <p-autoComplete
+        inputId="destinataire"
+        formControlName="destinataire"
+        [suggestions]="suggestionsDestinataires"
+        (completeMethod)="rechercherDestinataires($event)"
+        [dropdown]="false"
+        placeholder="Saisir ou choisir un destinataire"
+        styleClass="w-full" />
+    </div>
+  }
 
   <div class="champ">
     <label for="motif">Motif</label>
     <textarea id="motif" formControlName="motif" rows="2"></textarea>
   </div>
+
+  <hr class="formulaire__separateur" />
+  <h3>Gadgets à distribuer</h3>
+
+  <div formArrayName="lignes" class="lignes-distribution">
+    @for (ligne of lignes.controls; track ligne; let i = $index) {
+      <div class="ligne-distribution" [formGroupName]="i">
+        <div class="champ">
+          <label>Gadget *</label>
+          <p-select
+            [options]="gadgetsDisponibles"
+            optionLabel="libelle"
+            optionValue="idGadget"
+            formControlName="idGadget"
+            [filter]="true"
+            filterBy="libelle"
+            placeholder="Sélectionner un gadget"
+            class="w-full">
+            <ng-template let-gadget pTemplate="item">
+              {{ gadget.libelle }} — stock : {{ gadget.quantiteDisponible }}
+            </ng-template>
+          </p-select>
+          @if (stockDisponible(i) !== null) {
+            <span class="champ__aide"
+              >Stock disponible : {{ stockDisponible(i) }}</span
+            >
+          }
+        </div>
+
+        <div class="champ champ--etroit">
+          <label>Quantité *</label>
+          <input type="number" min="1" formControlName="quantiteDistribuee" />
+          @if (quantiteDepasseStock(i)) {
+            <span class="champ__erreur">Dépasse le stock disponible.</span>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="bouton-icone bouton-icone--supprimer"
+          (click)="retirerLigne(i)"
+          [disabled]="lignes.length === 1"
+          aria-label="Retirer cette ligne">
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    }
+  </div>
+
+  <button type="button" class="bouton-secondaire" (click)="ajouterLigne()">
+    <i class="pi pi-plus"></i> Ajouter un gadget
+  </button>
 
   <div class="formulaire__actions">
     <button type="button" class="bouton-secondaire" (click)="annuler.emit()">

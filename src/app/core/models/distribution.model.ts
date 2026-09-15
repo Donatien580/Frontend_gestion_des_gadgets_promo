@@ -4,7 +4,6 @@ export type EtatDistribution =
   | "EN_ATTENTE"
   | "EXECUTEE"
   | "BORDEREAU_GENERE"
-  | "SIGNEE"
   | "ANNULEE";
 
 export interface LigneDistribution {
@@ -14,34 +13,42 @@ export interface LigneDistribution {
   quantiteDistribuee: number;
 }
 
+export interface LigneDistributionRequest {
+  idGadget: number;
+  quantiteDistribuee: number;
+}
+
 export interface Distribution {
   idDistribution: number;
   numeroBordereau: string;
   dateDistribution: string | Date;
   typeDistribution: TypeDistribution;
-  motif: string;
-  destinataire: string;
+  estDotation: boolean;
+  motif?: string;
+  destinataire?: string;
+  matriculeReceptionnaire?: string;
+  nomReceptionnaire?: string;
+  prenomReceptionnaire?: string;
+  serviceReceptionnaire?: string;
+  nombrePersonnes?: number;
   etat: EtatDistribution;
   dateGenerationBordereau?: string | Date;
-  dateSignature?: string | Date;
-  signePar?: string;
-  idDemande: number;
-  numeroDemande: string;
-  objetDemande: string;
+  idDemande?: number;
+  numeroDemande?: string;
+  objetDemande?: string;
   lignes: LigneDistribution[];
 }
 
 export interface DistributionRequest {
-  idDemande: number;
+  idDemande?: number;
+  typeDistribution?: TypeDistribution; // requis seulement si idDemande est absent (dotation)
   dateDistribution?: string;
   motif?: string;
   destinataire?: string;
+  matriculeReceptionnaire?: string;
+  nomReceptionnaire?: string;
+  prenomReceptionnaire?: string;
+  serviceReceptionnaire?: string;
+  nombrePersonnes?: number;
+  lignes: LigneDistributionRequest[];
 }
-
-// export interface PageResponse<T> {
-//   content: T[];
-//   page: number;
-//   size: number;
-//   totalElements: number;
-//   totalPages: number;
-// }

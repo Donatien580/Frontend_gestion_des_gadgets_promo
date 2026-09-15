@@ -1,18 +1,28 @@
 <div class="carte-indicateur" [class]="'carte-indicateur--' + accent">
-  <div class="carte-indicateur__icone">
-    <i [class]="icone"></i>
+  <div class="carte-indicateur__corps">
+    <div class="carte-indicateur__icone">
+      <i [class]="icone"></i>
+    </div>
+
+    <div class="carte-indicateur__texte">
+      <span class="carte-indicateur__libelle">{{ libelle }}</span>
+      <span class="carte-indicateur__valeur">{{ valeur }}</span>
+    </div>
   </div>
 
-  <div class="carte-indicateur__corps">
-    <span class="carte-indicateur__libelle">{{ libelle }}</span>
-    <span class="carte-indicateur__valeur">{{ valeur }}</span>
-
-    @if (libelleTendance) {
-      <span class="carte-indicateur__tendance" [class]="'carte-indicateur__tendance--' + tendance">
-        @if (tendance === 'hausse') { <i class="pi pi-arrow-up"></i> }
-        @if (tendance === 'baisse') { <i class="pi pi-arrow-down"></i> }
+  @if (libelleTendance) {
+    <div class="carte-indicateur__footer">
+      <span
+        class="carte-indicateur__tendance"
+        [class]="'carte-indicateur__tendance--' + tendance">
+        @if (tendance === "hausse") {
+          <i class="pi pi-arrow-up"></i>
+        }
+        @if (tendance === "baisse") {
+          <i class="pi pi-arrow-down"></i>
+        }
         {{ libelleTendance }}
       </span>
-    }
-  </div>
+    </div>
+  }
 </div>

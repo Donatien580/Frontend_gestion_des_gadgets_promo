@@ -1,7 +1,6 @@
 import { Categorie } from './categorie.model';
 
 export type EtatGadget = 'DISPONIBLE' | 'MANQUANT' | 'ENDOMMAGE';
-
 export interface Gadget {
   idGadget: number;
   libelle: string;
@@ -15,7 +14,6 @@ export interface Gadget {
   categorie: Categorie;
   sousSeuilAlerte: boolean;
 }
-
 export interface CreateGadgetRequest {
   libelle: string;
   designation?: string;

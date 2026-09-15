@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
-  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -9,22 +8,11 @@ import {
 } from "@angular/forms";
 import { of, switchMap } from "rxjs";
 import { DemandeService } from "../services/demande.service";
-import { CategorieService } from "../../catalogue/services/categorie.service";
-import { GadgetService } from "../../catalogue/services/gadget.service";
-import { ServicesService } from "../../services/servcice/services.service";
 import { CardModule } from "primeng/card";
 import { NotificationService } from "../../../core/services/notification.service";
-import {
-  Gadget,
-  Demande,
-  DemandeRequest,
-  TypeDemande,
-  Categorie,
-} from "../../../core/models";
-import { SelectModule } from "primeng/select";
-import { FormsModule } from "@angular/forms";
-import { Services } from "../../../core/models/service.model";
+import { Demande, DemandeRequest, TypeDemande } from "../../../core/models";
 import { FieldsetModule } from "primeng/fieldset";
+import { AutoCompleteModule } from "primeng/autocomplete";
 
 const TAILLE_MAX_OCTETS = 5 * 1024 * 1024;
 
@@ -35,9 +23,8 @@ const TAILLE_MAX_OCTETS = 5 * 1024 * 1024;
     CommonModule,
     CardModule,
     ReactiveFormsModule,
-    SelectModule,
     FieldsetModule,
-    FormsModule,
+    AutoCompleteModule,
   ],
   templateUrl: "./demande-formulaire.component.html",
   styleUrls: ["./demande-formulaire.component.scss"],
@@ -47,11 +34,7 @@ export class DemandeFormulaireComponent implements OnInit {
   @Output() enregistre = new EventEmitter<void>();
   @Output() annuler = new EventEmitter<void>();
 
-  categoriesDisponibles: Categorie[] = [];
-  servicesDisponibles: Services[] = [];
   enregistrement = false;
-
-  gadgetsParLigne: Gadget[][] = [];
 
   fichierJustificatif: File | null = null;
   nomFichierJustificatif = "";
@@ -61,64 +44,44 @@ export class DemandeFormulaireComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private demandeService: DemandeService,
-    private gadgetService: GadgetService,
-    private categorieService: CategorieService,
-    private servicesService: ServicesService,
     private notification: NotificationService,
   ) {
     this.initialiserFormulaire();
   }
 
   ngOnInit(): void {
-    this.categorieService.lister().subscribe({
-      next: (categories) => {
-        this.categoriesDisponibles = categories;
-      },
-      error: (err) => {
-        console.error("Erreur chargement catégories", err);
-        this.notification.error("Erreur lors du chargement des catégories.");
-      },
-    });
-
-    //Charge les services pour la demande interne
-    this.servicesService.lister().subscribe((services) => {
-      this.servicesDisponibles = services;
-    });
-
     if (this.demande) {
       this.remplirFormulaire(this.demande);
-    } else {
-      this.chargerGadgetsPourLigne(0, null);
     }
   }
 
-  chargerGadgetsPourLigne(index: number, idCategorie: number | null): void {
-    const options = {
-      page: 0,
-      taille: 200,
-      idCategorie: idCategorie ?? undefined,
-    };
-    this.gadgetService.lister(options).subscribe({
-      next: (page) => {
-        this.gadgetsParLigne[index] = page.content;
-      },
-      error: (err) => {
-        console.error("Erreur chargement gadgets", err);
-        this.notification.error("Erreur lors du chargement des gadgets.");
-      },
-    });
+  suggestionsNoms: string[] = [];
+  suggestionsPrenoms: string[] = [];
+  suggestionsServices: string[] = [];
+  suggestionsStructures: string[] = [];
+
+  rechercherNoms(event: { query: string }): void {
+    this.demandeService
+      .suggererNoms(event.query)
+      .subscribe((resultats) => (this.suggestionsNoms = resultats));
   }
 
-  /*
-   *lorsque la catégorie sélectionnée change, on recharge les gadgets correspondants.
-   */
-  onCategorieChange(index: number, idCategorie: number | null): void {
-    this.lignes.at(index).get("idGadget")?.reset(null);
-    this.chargerGadgetsPourLigne(index, idCategorie);
+  rechercherPrenoms(event: { query: string }): void {
+    this.demandeService
+      .suggererPrenoms(event.query)
+      .subscribe((resultats) => (this.suggestionsPrenoms = resultats));
   }
 
-  get lignes(): FormArray {
-    return this.formulaire.get("lignes") as FormArray;
+  rechercherServices(event: { query: string }): void {
+    this.demandeService
+      .suggererServices(event.query)
+      .subscribe((resultats) => (this.suggestionsServices = resultats));
+  }
+
+  rechercherStructures(event: { query: string }): void {
+    this.demandeService
+      .suggererStructures(event.query)
+      .subscribe((resultats) => (this.suggestionsStructures = resultats));
   }
 
   get type(): TypeDemande {
@@ -131,14 +94,14 @@ export class DemandeFormulaireComponent implements OnInit {
       objet: ["", Validators.required],
       dateSouhaitee: [""],
       observations: [""],
+      nomDemandeur: ["", Validators.required],
+      prenomDemandeur: [""],
+      telephoneDemandeur: [""],
       // Interne
-      idService: [null],
-      nombrePersonnelsImpactes: [null],
+      matriculeDemandeur: [""],
+      serviceDemandeur: [""],
       // Externe
-      structure: [""],
-      representant: [""],
-      telephone: [""],
-      lignes: this.formBuilder.array([this.creerLigne()]),
+      structureDemandeur: [""],
     });
   }
 
@@ -150,69 +113,22 @@ export class DemandeFormulaireComponent implements OnInit {
         ? this.formaterDate(demande.dateSouhaitee)
         : "",
       observations: demande.observations || "",
-      idService: demande.idService || null,
-      nombrePersonnelsImpactes: demande.nombrePersonnelsImpactes || null,
-      structure: demande.structure || "",
-      representant: demande.representant || "",
-      telephone: demande.telephone || "",
-    });
-
-    this.lignes.clear();
-    this.gadgetsParLigne = [];
-
-    demande.lignes.forEach((ligne, index) => {
-      this.lignes.push(
-        this.formBuilder.group({
-          idGadget: [ligne.idGadget, Validators.required],
-          quantiteDemandee: [
-            ligne.quantiteDemandee,
-            [Validators.required, Validators.min(1)],
-          ],
-          idCategorieFiltre: [null],
-        }),
-      );
-      this.chargerGadgetsPourLigne(index, null);
-    });
-  }
-
-  creerLigne(): FormGroup {
-    return this.formBuilder.group({
-      idGadget: [null, Validators.required],
-      quantiteDemandee: [1, [Validators.required, Validators.min(1)]],
-      idCategorieFiltre: [null],
+      nomDemandeur: demande.nomDemandeur,
+      prenomDemandeur: demande.prenomDemandeur || "",
+      telephoneDemandeur: demande.telephoneDemandeur || "",
+      matriculeDemandeur: demande.matriculeDemandeur || "",
+      serviceDemandeur: demande.serviceDemandeur || "",
+      structureDemandeur: demande.structureDemandeur || "",
     });
   }
 
   choisirType(type: TypeDemande): void {
     this.formulaire.get("typeDemande")!.setValue(type);
     if (type === "INTERNE") {
-      this.formulaire.get("structure")!.reset();
-      this.formulaire.get("representant")!.reset();
-      this.formulaire.get("telephone")!.reset();
+      this.formulaire.get("structureDemandeur")!.reset("");
     } else {
-      this.formulaire.get("idService")!.reset();
-      this.formulaire.get("nombrePersonnelsImpactes")!.reset();
-    }
-  }
-
-  onServiceSelected(idService: number): void {
-    const service = this.servicesDisponibles.find(
-      (s) => s.idService === idService,
-    );
-    if (service) {
-    }
-  }
-
-  ajouterLigne(): void {
-    this.lignes.push(this.creerLigne());
-    const nouvelIndex = this.lignes.length - 1;
-    this.chargerGadgetsPourLigne(nouvelIndex, null);
-  }
-
-  retirerLigne(index: number): void {
-    if (this.lignes.length > 1) {
-      this.lignes.removeAt(index);
-      this.gadgetsParLigne.splice(index, 1);
+      this.formulaire.get("matriculeDemandeur")!.reset("");
+      this.formulaire.get("serviceDemandeur")!.reset("");
     }
   }
 
@@ -235,25 +151,42 @@ export class DemandeFormulaireComponent implements OnInit {
     }
 
     const valeurs = this.formulaire.value;
+
+    if (valeurs.typeDemande === "INTERNE") {
+      if (!valeurs.matriculeDemandeur || !valeurs.serviceDemandeur) {
+        this.notification.error(
+          "Le matricule et le service du demandeur sont obligatoires.",
+        );
+        return;
+      }
+    } else if (!valeurs.structureDemandeur) {
+      this.notification.error(
+        "La structure est obligatoire pour une demande externe.",
+      );
+      return;
+    }
+
     const requete: DemandeRequest = {
       objet: valeurs.objet,
       typeDemande: valeurs.typeDemande,
       dateSouhaitee: valeurs.dateSouhaitee || undefined,
       observations: valeurs.observations || undefined,
-      lignes: valeurs.lignes.map((l: any) => ({
-        idGadget: l.idGadget,
-        quantiteDemandee: l.quantiteDemandee,
-      })),
+      nomDemandeur: valeurs.nomDemandeur,
+      prenomDemandeur: valeurs.prenomDemandeur || undefined,
+      telephoneDemandeur: valeurs.telephoneDemandeur || undefined,
+      matriculeDemandeur:
+        valeurs.typeDemande === "INTERNE"
+          ? valeurs.matriculeDemandeur
+          : undefined,
+      serviceDemandeur:
+        valeurs.typeDemande === "INTERNE"
+          ? valeurs.serviceDemandeur
+          : undefined,
+      structureDemandeur:
+        valeurs.typeDemande === "EXTERNE"
+          ? valeurs.structureDemandeur
+          : undefined,
     };
-
-    if (valeurs.typeDemande === "INTERNE") {
-      requete.idService = valeurs.idService;
-      requete.nombrePersonnelsImpactes = valeurs.nombrePersonnelsImpactes;
-    } else {
-      requete.structure = valeurs.structure;
-      requete.representant = valeurs.representant;
-      requete.telephone = valeurs.telephone || undefined;
-    }
 
     this.enregistrement = true;
 
@@ -263,14 +196,14 @@ export class DemandeFormulaireComponent implements OnInit {
 
     operation
       .pipe(
-        switchMap((demandeCreee) => {
+        switchMap((demandeEnregistree) => {
           if (this.fichierJustificatif) {
             return this.demandeService.televerserPieceJustificative(
-              demandeCreee.idDemande,
+              demandeEnregistree.idDemande,
               this.fichierJustificatif!,
             );
           }
-          return of(demandeCreee);
+          return of(demandeEnregistree);
         }),
       )
       .subscribe({
@@ -281,19 +214,9 @@ export class DemandeFormulaireComponent implements OnInit {
         },
         error: () => {
           this.enregistrement = false;
-          this.notification.error("Erreur lors de l'enregistrement");
+          this.notification.error("Erreur lors de l'enregistrement.");
         },
       });
-  }
-
-  getNomResponsable(idService: number | null | undefined): string {
-    if (!idService) return "";
-    const service = this.servicesDisponibles.find(
-      (s) => s.idService === idService,
-    );
-    return service
-      ? `${service.matriculeResponsable} - ${service.nomResponsable}`
-      : "";
   }
 
   formaterDate(date: string | Date): string {

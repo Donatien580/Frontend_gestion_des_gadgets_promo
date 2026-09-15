@@ -28,41 +28,76 @@ export class DemandeDetailComponent {
 
   refusDialogVisible = false;
   motifRefus = "";
+  enCours = false;
+
+  private readonly etatsClotures: EtatDemande[] = [
+    "TRAITEE",
+    "REFUSEE",
+    "ANNULEE",
+  ];
 
   constructor(
     private demandeService: DemandeService,
     private notification: NotificationService,
   ) {}
 
+  get peutValider(): boolean {
+    return this.demande?.etat === "EN_ATTENTE";
+  }
+
+  get peutRefuser(): boolean {
+    return !!this.demande && !this.etatsClotures.includes(this.demande.etat);
+  }
+
   ouvrirRefusDialog(): void {
     this.motifRefus = "";
     this.refusDialogVisible = true;
   }
 
-  // Ferme le popup sans refuser
   fermerRefusDialog(): void {
     this.refusDialogVisible = false;
   }
 
-  // Confirme le refus avec le motif saisi
   confirmerRefus(): void {
-    if (!this.demande) return;
-    if (!this.motifRefus.trim()) {
-      return;
-    }
+    if (!this.demande || !this.motifRefus.trim()) return;
+
+    this.enCours = true;
     this.demandeService
-      .refuser(this.demande.idDemande, this.motifRefus.trim())
+      .refuser(this.demande.idDemande, { motifRefus: this.motifRefus.trim() })
       .subscribe({
         next: () => {
+          this.enCours = false;
           this.refusDialogVisible = false;
           this.motifRefus = "";
+          this.notification.success("Demande refusée avec succès.");
           this.actionEffectuee.emit();
         },
-        error: (err) => {
-          console.error("Erreur lors du refus", err);
-          this.refusDialogVisible = false;
+        error: (erreur) => {
+          this.enCours = false;
+          this.notification.error(
+            erreur?.error?.message || "Erreur lors du refus.",
+          );
         },
       });
+  }
+
+  valider(): void {
+    if (!this.demande) return;
+
+    this.enCours = true;
+    this.demandeService.valider(this.demande.idDemande).subscribe({
+      next: () => {
+        this.enCours = false;
+        this.notification.success("Demande validée avec succès.");
+        this.actionEffectuee.emit();
+      },
+      error: (erreur) => {
+        this.enCours = false;
+        this.notification.error(
+          erreur?.error?.message || "Erreur lors de la validation.",
+        );
+      },
+    });
   }
 
   getPieceUrl(chemin: string): string {
@@ -105,54 +140,5 @@ export class DemandeDetailComponent {
       default:
         return "";
     }
-  }
-
-  valider(): void {
-    if (!this.demande) return;
-    this.demandeService.valider(this.demande.idDemande).subscribe({
-      next: () => {
-        this.notification.success("Demande validée avec succès.");
-        this.actionEffectuee.emit();
-      },
-      error: (err) => {
-        console.error("Erreur lors de la validation", err);
-        this.notification.error("Erreur lors de la validation.");
-      },
-    });
-  }
-
-  refuser(): void {
-    if (!this.demande) return;
-    if (!this.motifRefus.trim()) {
-      this.notification.error("Veuillez saisir un motif de refus.");
-      return;
-    }
-    this.demandeService
-      .refuser(this.demande.idDemande, this.motifRefus.trim())
-      .subscribe({
-        next: () => {
-          this.notification.success("Demande refusée avec succès.");
-          this.motifRefus = "";
-          this.actionEffectuee.emit();
-        },
-        error: (err) => {
-          console.error("Erreur lors du refus", err);
-          this.notification.error("Erreur lors du refus.");
-        },
-      });
-  }
-
-  affecter(): void {
-    if (!this.demande) return;
-    this.demandeService.affecter(this.demande.idDemande).subscribe({
-      next: () => {
-        this.notification.success("Demande affectée avec succès.");
-        this.actionEffectuee.emit();
-      },
-      error: (err) => {
-        console.error("Erreur lors de l'affectation", err);
-        this.notification.error("Erreur lors de l'affectation.");
-      },
-    });
   }
 }

@@ -41,11 +41,11 @@ export class MenuLateralComponent {
       titre: "Gestion",
 
       elements: [
-        {
-          libelle: "Catalogue",
-          icone: "pi pi-box",
-          route: "/catalogue",
-        },
+        // {
+        //   libelle: "Catalogue",
+        //   icone: "pi pi-box",
+        //   route: "/catalogue",
+        // },
         {
           libelle: "Approvisionnements",
           icone: "pi pi-truck",
@@ -114,20 +114,20 @@ export class MenuLateralComponent {
               route: "/catalogue/categories",
             },
             {
-              libelle: "Seuils d'alerte",
-              icone: "pi pi-bell",
-              route: "/admin/parametres/seuils",
+              libelle: "Catalogue",
+              icone: "pi pi-box",
+              route: "/catalogue",
             },
-            {
-              libelle: "Service",
-              icone: "pi pi-building",
-              route: "admin/parametres/services",
-            },
-            {
-              libelle: "Personnel",
-              icone: "pi pi-users",
-              route: "admin/parametres/personnels",
-            },
+            // {
+            //   libelle: "Service",
+            //   icone: "pi pi-building",
+            //   route: "admin/parametres/services",
+            // },
+            // {
+            //   libelle: "Personnel",
+            //   icone: "pi pi-users",
+            //   route: "admin/parametres/personnels",
+            // },
             {
               libelle: "Paramètres généraux",
               icone: "pi pi-sliders-h",

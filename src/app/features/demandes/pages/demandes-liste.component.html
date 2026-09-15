@@ -40,7 +40,6 @@
       <span class="demandes-page__total"> Total : {{ totalRecords }} </span>
     </div>
 
-    <!-- Message personnalisé -->
     @if (message) {
       <p-message
         [severity]="message.severity"
@@ -65,7 +64,7 @@
             <th>Numéro</th>
             <th>Objet</th>
             <th>Type</th>
-            <th>Responsable</th>
+            <th>Demandeur</th>
             <th>Date</th>
             <th>État</th>
             <th class="actions-column">Actions</th>
@@ -84,11 +83,10 @@
               }
             </td>
             <td>
-              @if (demande.typeDemande === "INTERNE") {
-                {{ demande.nomResponsable || "—" }}
-              } @else {
-                {{ demande.representant || "—" }}
-              }
+              {{ demande.nomDemandeur
+              }}{{
+                demande.prenomDemandeur ? " " + demande.prenomDemandeur : ""
+              }}
             </td>
             <td>{{ demande.dateDemande | date: "dd/MM/yyyy HH:mm" }}</td>
             <td>
@@ -106,17 +104,19 @@
                     [text]="true"
                     [rounded]="true"
                     severity="warn"
-                    pTooltip="Modifier"
+                    pTooltip="Modifier (erreur de saisie)"
                     tooltipPosition="top"
                     (onClick)="ouvrirModification(demande)"></p-button>
-                  <!-- <p-button
+                }
+                @if (demande.etat === "VALIDEE_CHEF_DEPARTEMENT") {
+                  <p-button
                     icon="pi pi-user-plus"
                     [text]="true"
                     [rounded]="true"
                     severity="info"
-                    pTooltip="Affecter"
+                    pTooltip="Affecter (Chef Département)"
                     tooltipPosition="top"
-                    (onClick)="affecter(demande.idDemande)"></p-button> -->
+                    (onClick)="ouvrirAffectation(demande)"></p-button>
                 }
                 <p-button
                   icon="pi pi-eye"
@@ -154,7 +154,7 @@
       [modal]="true"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '900px' }"
+      [style]="{ width: '700px' }"
       (onHide)="fermerFormulaire()">
       @if (formulaireVisible) {
         <app-demande-formulaire
@@ -179,6 +179,61 @@
           (actionEffectuee)="loadAll()"
           (fermer)="fermerDetail()"></app-demande-detail>
       }
+    </p-dialog>
+
+    <!-- Modale affectation -->
+    <p-dialog
+      [(visible)]="affectationVisible"
+      header="Affecter la demande"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: '420px' }"
+      (onHide)="fermerAffectation()">
+      @if (demandeAAffecter) {
+        <div class="affectation-contenu">
+          <p>
+            Choisissez l'agent qui va traiter la demande
+            <strong>{{ demandeAAffecter.numeroDemande }}</strong
+            >.
+          </p>
+
+          <div class="champ">
+            <label for="agentAffecte">Agent *</label>
+            <select
+              id="agentAffecte"
+              [(ngModel)]="idAgentSelectionne"
+              class="demandes-page__select">
+              <option [ngValue]="null" disabled>Sélectionner un agent…</option>
+              @for (agent of agentsAffectables; track agent.idUtilisateur) {
+                <option [ngValue]="agent.idUtilisateur">
+                  {{ agent.nom }} {{ agent.prenom }}
+                </option>
+              }
+            </select>
+          </div>
+
+          @if (agentsAffectables.length === 0) {
+            <p class="affectation-vide">
+              Aucun agent disponible (Chef Service / Gestionnaire de stock).
+            </p>
+          }
+        </div>
+      }
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Annuler"
+          icon="pi pi-times"
+          severity="secondary"
+          (onClick)="fermerAffectation()"></p-button>
+        <p-button
+          label="Confirmer l'affectation"
+          icon="pi pi-check"
+          severity="info"
+          [disabled]="!idAgentSelectionne || affectationEnCours"
+          (onClick)="confirmerAffectation()"></p-button>
+      </ng-template>
     </p-dialog>
   </p-card>
 </div>

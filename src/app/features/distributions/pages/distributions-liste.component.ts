@@ -11,6 +11,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
+import { MessageModule } from "primeng/message";
 import { DistributionFormulaireComponent } from "./distribution-formulaire.component";
 import { DistributionDetailComponent } from "./distribution-detail.component";
 
@@ -25,6 +26,7 @@ import { DistributionDetailComponent } from "./distribution-detail.component";
     TooltipModule,
     ButtonModule,
     DialogModule,
+    MessageModule,
     DistributionFormulaireComponent,
     DistributionDetailComponent,
   ],
@@ -35,17 +37,20 @@ export class DistributionListeComponent implements OnInit {
   distributions: Distribution[] = [];
   isLoading = false;
 
-  // Pagination
   totalRecords = 0;
   recordsPerPage = 10;
   currentPage = 0;
 
-  // Modales
   creationVisible = false;
   detailVisible = false;
   distributionDetail: Distribution | null = null;
 
   items: MenuItem[] = [];
+
+  message: {
+    severity: "error" | "success" | "info" | "warn" | "secondary" | "contrast";
+    text: string;
+  } | null = null;
 
   constructor(
     private distributionService: DistributionService,
@@ -68,11 +73,6 @@ export class DistributionListeComponent implements OnInit {
     ];
   }
 
-  message: {
-    severity: "error" | "success" | "info" | "warn" | "secondary" | "contrast";
-    text: string;
-  } | null = null;
-
   loadAll(): void {
     this.isLoading = true;
     this.distributionService
@@ -84,9 +84,6 @@ export class DistributionListeComponent implements OnInit {
             dateDistribution: this.convertirDate(d.dateDistribution)!,
             dateGenerationBordereau: d.dateGenerationBordereau
               ? (this.convertirDate(d.dateGenerationBordereau) ?? undefined)
-              : undefined,
-            dateSignature: d.dateSignature
-              ? (this.convertirDate(d.dateSignature) ?? undefined)
               : undefined,
           }));
           this.totalRecords = page.totalElements;
@@ -116,7 +113,6 @@ export class DistributionListeComponent implements OnInit {
     return new Date(date);
   }
 
-  // Actions
   ouvrirCreation(): void {
     this.creationVisible = true;
   }
@@ -141,48 +137,19 @@ export class DistributionListeComponent implements OnInit {
     this.distributionDetail = null;
   }
 
-  // Génération du bordereau PDF
-  genererBordereau(id: number): void {
-    this.distributionService.genererBordereauPdf(id).subscribe((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
-      setTimeout(() => window.URL.revokeObjectURL(url), 100);
-      // Optionnel : recharger la liste pour refléter l'état BORDEREAU_GENERE
-      this.loadAll();
-    });
-  }
-
   executer(id: number): void {
     this.distributionService.executer(id).subscribe({
       next: () => {
-        this.showMessage({
-          severity: "success",
-          text: "Distribution exécutée avec succès",
-        });
-        this.loadAll();
-      },
-      error: (err) =>
-        this.showMessage({
-          severity: "error",
-          text: "Erreur lors de l'exécution",
-        }),
-    });
-  }
-
-  // Signature manuelle
-  signer(id: number): void {
-    const signePar = prompt("Nom du signataire :");
-    if (!signePar) return;
-    this.distributionService.signer(id, signePar).subscribe({
-      next: () => {
-        this.notification.success("Bordereau signé");
+        this.notification.success("Distribution exécutée avec succès");
         this.loadAll();
         if (this.distributionDetail?.idDistribution === id) {
-          this.distributionDetail.signePar = signePar;
-          this.distributionDetail.etat = "SIGNEE";
+          this.fermerDetail();
         }
       },
-      error: () => this.notification.error("Erreur lors de la signature"),
+      error: (erreur) =>
+        this.notification.error(
+          erreur?.error?.message || "Erreur lors de l'exécution",
+        ),
     });
   }
 
@@ -190,10 +157,10 @@ export class DistributionListeComponent implements OnInit {
     switch (etat) {
       case "EN_ATTENTE":
         return "En attente";
+      case "EXECUTEE":
+        return "Exécutée";
       case "BORDEREAU_GENERE":
         return "Bordereau généré";
-      case "SIGNEE":
-        return "Signée";
       case "ANNULEE":
         return "Annulée";
       default:
@@ -205,23 +172,14 @@ export class DistributionListeComponent implements OnInit {
     switch (etat) {
       case "EN_ATTENTE":
         return "statut-attente";
+      case "EXECUTEE":
+        return "statut-traitee";
       case "BORDEREAU_GENERE":
         return "statut-valide";
-      case "SIGNEE":
-        return "statut-traitee";
       case "ANNULEE":
         return "statut-annulee";
       default:
         return "";
     }
-  }
-  showMessage(msg: {
-    severity: "error" | "success" | "info" | "warn" | "secondary" | "contrast";
-    text: string;
-  }): void {
-    this.message = msg;
-    setTimeout(() => {
-      this.message = null;
-    }, 5000);
   }
 }

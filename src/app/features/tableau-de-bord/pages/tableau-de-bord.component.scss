@@ -12,8 +12,12 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 
-  h1 { margin-bottom: var(--space-1); }
-  p { margin: 0; }
+  h1 {
+    margin-bottom: var(--space-1);
+  }
+  p {
+    margin: 0;
+  }
 }
 
 .tableau-de-bord__astuce {
@@ -55,46 +59,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  cursor: grab;
 
-  h2 { margin: 0; }
+  h2 {
+    margin: 0;
+  }
 
-  i:not(.widget__poignee) {
+  i {
     color: var(--color-primary-500);
     font-size: 16px;
   }
-
-  &:active {
-    cursor: grabbing;
-  }
-}
-
-.widget__poignee {
-  color: var(--color-text-muted);
-  font-size: 14px;
-  margin-right: 2px;
-}
-
-// --- États du glisser-déposer (Angular CDK) ---
-.cdk-drag-preview {
-  box-shadow: var(--shadow-elevated);
-  border-radius: var(--radius-lg);
-  opacity: 0.95;
-}
-
-.cdk-drag-placeholder {
-  opacity: 0.3;
-  border: 2px dashed var(--color-primary-300);
-  border-radius: var(--radius-lg);
-  background: var(--color-primary-50);
-}
-
-.cdk-drag-animating {
-  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.widgets-liste.cdk-drop-list-dragging .widget:not(.cdk-drag-placeholder) {
-  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 // --- Widget "Indicateurs clés" ---
@@ -137,7 +110,10 @@
   font-size: var(--font-size-small);
   font-weight: 600;
   text-align: center;
-  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
     text-decoration: none;
@@ -196,4 +172,249 @@
   height: 100%;
   background: var(--color-danger);
   border-radius: 999px;
+}
+
+.tableau-de-bord__chargement {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.tableau__vide {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 1rem;
+}
+
+.niveau {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.niveau-critique {
+  background: #fef2f2;
+  color: var(--color-danger);
+  border: 1px solid #fecaca;
+}
+
+.niveau-avertissement {
+  background: #fefce8;
+  color: #a16207;
+  border: 1px solid #fde68a;
+}
+
+.tableau-de-bord__chargement {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.tableau__vide {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 1rem;
+}
+
+/* Le widget "Stock" n'a pas besoin du cadre/padding standard des autres
+   widgets : ses deux panneaux internes gèrent déjà leur propre carte. */
+.widget--sans-cadre .widget__corps {
+  padding: 0;
+}
+
+/* =========================================================
+   GRILLE STOCK + ALERTES (2 colonnes, hauteur alignée)
+   ========================================================= */
+.grille-stock-alertes {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .grille-stock-alertes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panneau-stock,
+.panneau-alertes {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-surface-200);
+  border-radius: var(--radius-md, 10px);
+  padding: 1.5rem;
+}
+
+.panneau-stock__entete,
+.panneau-alertes__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.panneau-stock__entete h3,
+.panneau-alertes__entete h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panneau-stock__sous-titre {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.panneau-alertes__info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ---- Barres de répartition par catégorie ---- */
+.panneau-stock__liste {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  justify-content: center;
+}
+
+.barre-categorie__entete {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.barre-categorie__piste {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-surface-100);
+  overflow: hidden;
+}
+
+.barre-categorie__remplissage {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-400),
+    var(--color-primary-600)
+  );
+  transition: width 0.3s ease;
+}
+
+/* ---- Cartes d'alerte, occupent tout l'espace vertical disponible ---- */
+.panneau-alertes__liste {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+}
+
+.carte-alerte {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+  background: var(--color-surface-50, #f9fafb);
+}
+
+.carte-alerte__quantite {
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.carte-alerte__infos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.carte-alerte__libelle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carte-alerte__categorie {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.carte-alerte__badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.carte-alerte.niveau-critique {
+  border-left-color: var(--color-danger);
+}
+.carte-alerte.niveau-critique .carte-alerte__quantite,
+.carte-alerte.niveau-critique .carte-alerte__badge {
+  color: var(--color-danger);
+}
+
+.carte-alerte.niveau-avertissement {
+  border-left-color: #d97706;
+}
+.carte-alerte.niveau-avertissement .carte-alerte__quantite,
+.carte-alerte.niveau-avertissement .carte-alerte__badge {
+  color: #d97706;
+}
+
+.panneau-alertes__vide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  text-align: center;
+
+  i {
+    font-size: 2rem;
+    color: var(--color-primary-500);
+  }
+}
+
+.widget--sans-cadre {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.widget--sans-cadre .widget__corps {
+  padding: 0;
+}
+
+.widget--sans-cadre .widget__entete {
+  margin-bottom: var(--space-3);
+  min-height: 20px; /* garde une zone cliquable pour la poignée même sans titre */
 }

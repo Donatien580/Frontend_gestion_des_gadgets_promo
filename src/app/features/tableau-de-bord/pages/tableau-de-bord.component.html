@@ -4,127 +4,221 @@
       <h1>Tableau de bord</h1>
       <p>Vue d'ensemble de l'activité de gestion des gadgets promotionnels.</p>
     </div>
-    <span class="tableau-de-bord__astuce">
-      <i class="pi pi-arrows-alt"></i>
-      Glissez un widget par sa poignée pour réorganiser la page
-    </span>
   </header>
 
-  <div class="widgets-liste" cdkDropList (cdkDropListDropped)="deposerWidget($event)">
-    @for (idWidget of ordreWidgets(); track idWidget) {
-      <section class="widget" cdkDrag>
-        <div class="widget__entete">
-          <div class="widget__entete-titre" cdkDragHandle>
-            <i class="pi pi-arrows-alt widget__poignee"></i>
-            <i [class]="definitionsWidgets[idWidget].icone"></i>
-            <h2>{{ definitionsWidgets[idWidget].titre }}</h2>
-          </div>
-
-          @if (idWidget === 'demandes') {
-            <a routerLink="/demandes" class="panneau__lien">Voir tout</a>
-          }
-          @if (idWidget === 'alertes') {
-            <a routerLink="/catalogue" class="panneau__lien">Voir le catalogue</a>
-          }
-        </div>
-
-        <div class="widget__corps">
-          @switch (idWidget) {
-            @case ('kpis') {
-              <div class="widget-kpis">
-                <app-carte-indicateur
-                  libelle="Références actives"
-                  valeur="128"
-                  icone="pi pi-box"
-                  accent="primary"
-                  tendance="hausse"
-                  libelleTendance="+6 ce mois-ci"
-                />
-                <app-carte-indicateur
-                  libelle="Demandes en attente"
-                  valeur="14"
-                  icone="pi pi-inbox"
-                  accent="warning"
-                  tendance="neutre"
-                  libelleTendance="Dont 3 urgentes"
-                />
-                <app-carte-indicateur
-                  libelle="Distributions ce mois"
-                  valeur="37"
-                  icone="pi pi-send"
-                  accent="success"
-                  tendance="hausse"
-                  libelleTendance="+12% vs mois dernier"
-                />
-                <app-carte-indicateur
-                  libelle="Alertes seuil de stock"
-                  valeur="3"
-                  icone="pi pi-exclamation-triangle"
-                  accent="danger"
-                  tendance="baisse"
-                  libelleTendance="-2 vs semaine dernière"
-                />
+  @if (chargement) {
+    <p class="tableau-de-bord__chargement">Chargement du tableau de bord…</p>
+  } @else {
+    <div class="widgets-liste">
+      @for (section of sections; track section.id) {
+        <section
+          class="widget"
+          [class.widget--sans-cadre]="
+            section.id === 'repartitionEtAlertes' || section.id === 'kpis'
+          ">
+          @if (section.id !== "kpis") {
+            <div class="widget__entete">
+              <div class="widget__entete-titre">
+                <i [class]="section.icone"></i>
+                <h2>{{ section.titre }}</h2>
               </div>
-            }
 
-            @case ('raccourcis') {
-              <div class="widget-raccourcis">
-                @for (module of modulesRaccourcis; track module.id) {
-                  <a
-                    class="raccourci"
-                    [routerLink]="module.route"
-                    [style.--couleur-module]="module.couleur"
-                  >
-                    <span class="raccourci__icone">
-                      <i [class]="module.icone"></i>
-                    </span>
-                    {{ module.libelle }}
-                  </a>
-                }
-              </div>
-            }
+              @if (section.id === "demandes") {
+                <a routerLink="/demandes" class="panneau__lien">Voir tout</a>
+              }
+            </div>
+          }
 
-            @case ('demandes') {
-              <table class="tableau">
-                <thead>
-                  <tr>
-                    <th>Numéro</th>
-                    <th>Objet</th>
-                    <th>Type</th>
-                    <th>Statut</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (demande of demandesRecentes; track demande.numero) {
-                    <tr>
-                      <td class="tableau__cellule-forte">{{ demande.numero }}</td>
-                      <td>{{ demande.objet }}</td>
-                      <td>{{ demande.type }}</td>
-                      <td><app-badge-statut [etat]="demande.etat" /></td>
-                    </tr>
+          <div class="widget__corps">
+            @switch (section.id) {
+              @case ("kpis") {
+                <div class="widget-kpis">
+                  <app-carte-indicateur
+                    libelle="Catalogue actif"
+                    [valeur]="tableauDeBord?.totalGadgets ?? 0"
+                    icone="pi pi-box"
+                    accent="primary"
+                    [libelleTendance]="libelleCategories" />
+                  <app-carte-indicateur
+                    libelle="Alertes de stock"
+                    [valeur]="totalAlertes"
+                    icone="pi pi-exclamation-triangle"
+                    accent="danger"
+                    libelleTendance="Seuil minimal atteint ou franchi" />
+                  <app-carte-indicateur
+                    libelle="Demandes en attente"
+                    [valeur]="tableauDeBord?.demandesEnAttente ?? 0"
+                    icone="pi pi-inbox"
+                    accent="warning"
+                    libelleTendance="Circuit de validation en cours" />
+                  <app-carte-indicateur
+                    libelle="Distributions ce mois"
+                    [valeur]="tableauDeBord?.distributionsCeMois ?? 0"
+                    icone="pi pi-send"
+                    accent="success"
+                    libelleTendance="Bordereaux exécutés ce mois-ci" />
+                </div>
+              }
+
+              @case ("repartitionEtAlertes") {
+                <div class="grille-stock-alertes">
+                  <div class="panneau-stock">
+                    <div class="panneau-stock__entete">
+                      <div>
+                        <h3>Niveaux de stock par gadget</h3>
+                        <span class="panneau-stock__sous-titre"
+                          >Top 10 des gadgets par quantité disponible</span
+                        >
+                      </div>
+                      <a routerLink="/catalogue" class="panneau__lien"
+                        >Voir le catalogue →</a
+                      >
+                    </div>
+
+                    <div class="panneau-stock__liste">
+                      @for (
+                        gadget of niveauxStockGadgets;
+                        track gadget.idGadget
+                      ) {
+                        <div class="barre-categorie">
+                          <div class="barre-categorie__entete">
+                            <span
+                              >{{ gadget.libelle }}
+                              <small class="barre-categorie__categorie"
+                                >— {{ gadget.categorie }}</small
+                              ></span
+                            >
+                            <strong
+                              >{{ gadget.quantiteDisponible }} unités</strong
+                            >
+                          </div>
+                          <div class="barre-categorie__piste">
+                            <div
+                              class="barre-categorie__remplissage"
+                              [style.width.%]="
+                                largeurBarre(gadget.quantiteDisponible)
+                              "></div>
+                          </div>
+                        </div>
+                      } @empty {
+                        <p class="tableau__vide">
+                          Aucune donnée de stock disponible.
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="panneau-alertes">
+                    <div class="panneau-alertes__entete">
+                      <h3>
+                        <i class="pi pi-exclamation-triangle"></i> Articles sous
+                        seuil
+                      </h3>
+                      <span
+                        class="panneau-alertes__info"
+                        title="Un e-mail est envoyé automatiquement au gestionnaire de stock dès qu'un seuil est franchi">
+                        <i class="pi pi-envelope"></i> Alertes envoyées
+                        automatiquement
+                      </span>
+                    </div>
+
+                    <div class="panneau-alertes__liste">
+                      @for (gadget of gadgetsAlertes; track gadget.idGadget) {
+                        <div
+                          class="carte-alerte"
+                          [class.carte-alerte--critique]="
+                            gadget.quantiteDisponible === 0
+                          "
+                          [class.carte-alerte--attention]="
+                            gadget.quantiteDisponible > 0
+                          ">
+                          <div class="carte-alerte__quantite">
+                            {{ gadget.quantiteDisponible }}
+                          </div>
+                          <div class="carte-alerte__infos">
+                            <span class="carte-alerte__libelle">{{
+                              gadget.libelle
+                            }}</span>
+                            <span class="carte-alerte__categorie">{{
+                              gadget.categorie
+                            }}</span>
+                          </div>
+                          <span class="carte-alerte__badge">{{
+                            gadget.quantiteDisponible === 0
+                              ? "Rupture"
+                              : "Seuil atteint"
+                          }}</span>
+                        </div>
+                      } @empty {
+                        <div class="panneau-alertes__vide">
+                          <i class="pi pi-check-circle"></i>
+                          <p>Tous les stocks sont au-dessus du seuil.</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
+              @case ("raccourcis") {
+                <div class="widget-raccourcis">
+                  @for (module of modulesRaccourcis; track module.id) {
+                    <a
+                      class="raccourci"
+                      [routerLink]="module.route"
+                      [style.--couleur-module]="module.couleur">
+                      <span class="raccourci__icone"
+                        ><i [class]="module.icone"></i
+                      ></span>
+                      {{ module.libelle }}
+                    </a>
                   }
-                </tbody>
-              </table>
-            }
+                </div>
+              }
 
-            @case ('alertes') {
-              <ul class="liste-alertes">
-                @for (alerte of alertesStock; track alerte.libelle) {
-                  <li class="liste-alertes__item">
-                    <div class="liste-alertes__info">
-                      <span class="liste-alertes__libelle">{{ alerte.libelle }}</span>
-                      <span class="liste-alertes__detail">{{ alerte.quantite }} restants (seuil : {{ alerte.seuil }})</span>
-                    </div>
-                    <div class="liste-alertes__barre">
-                      <div class="liste-alertes__barre-remplie" [style.width.%]="(alerte.quantite / alerte.seuil) * 100"></div>
-                    </div>
-                  </li>
-                }
-              </ul>
+              @case ("demandes") {
+                <table class="tableau">
+                  <thead>
+                    <tr>
+                      <th>Numéro</th>
+                      <th>Objet</th>
+                      <th>Type</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (
+                      demande of demandesRecentes;
+                      track demande.idDemande
+                    ) {
+                      <tr>
+                        <td class="tableau__cellule-forte">
+                          {{ demande.numeroDemande }}
+                        </td>
+                        <td>{{ demande.objet }}</td>
+                        <td>
+                          {{
+                            demande.typeDemande === "INTERNE"
+                              ? "Interne"
+                              : "Externe"
+                          }}
+                        </td>
+                        <td><app-badge-statut [etat]="demande.etat" /></td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="4" class="tableau__vide">
+                          Aucune demande récente.
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
             }
-          }
-        </div>
-      </section>
-    }
-  </div>
+          </div>
+        </section>
+      }
+    </div>
+  }
 </div>

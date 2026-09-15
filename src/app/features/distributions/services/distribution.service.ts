@@ -30,7 +30,7 @@ export class DistributionService {
   }
 
   executer(id: number): Observable<Distribution> {
-    return this.http.put<Distribution>(`${this.baseUrl}/${id}/executer`, {});
+    return this.http.patch<Distribution>(`${this.baseUrl}/${id}/executer`, {});
   }
 
   genererBordereauPdf(id: number): Observable<Blob> {
@@ -39,10 +39,31 @@ export class DistributionService {
     });
   }
 
-  signer(id: number, signePar: string): Observable<Distribution> {
-    const params = new HttpParams().set("signePar", signePar);
-    return this.http.put<Distribution>(`${this.baseUrl}/${id}/signer`, null, {
-      params,
-    });
+  suggererNomsReceptionnaire(prefixe: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/suggestions/noms-receptionnaire`,
+      { params: { prefixe } },
+    );
+  }
+
+  suggererPrenomsReceptionnaire(prefixe: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/suggestions/prenoms-receptionnaire`,
+      { params: { prefixe } },
+    );
+  }
+
+  suggererServicesReceptionnaire(prefixe: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/suggestions/services-receptionnaire`,
+      { params: { prefixe } },
+    );
+  }
+
+  suggererDestinataires(prefixe: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/suggestions/destinataires`,
+      { params: { prefixe } },
+    );
   }
 }

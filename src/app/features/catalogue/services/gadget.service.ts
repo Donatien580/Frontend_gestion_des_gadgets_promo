@@ -16,7 +16,6 @@ export interface OptionsListeGadgets {
   tri?: string;
   inclureInactifs?: boolean;
 }
-
 @Injectable({ providedIn: "root" })
 export class GadgetService {
   private readonly http = inject(HttpClient);

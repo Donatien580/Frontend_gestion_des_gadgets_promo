@@ -1,12 +1,17 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
-import { Demande, EtatDemande, PageResponse } from "../../../core/models";
+import {
+  AgentResume,
+  Demande,
+  EtatDemande,
+  PageResponse,
+} from "../../../core/models";
 import { DemandeService } from "../services/demande.service";
 import { MenuItem } from "primeng/api";
 import { TableModule } from "primeng/table";
-import { ConfirmationService } from "primeng/api";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
@@ -15,6 +20,7 @@ import { CardModule } from "primeng/card";
 import { DemandeFormulaireComponent } from "./demande-formulaire.component";
 import { DemandeDetailComponent } from "./demande-detail.component";
 import { MessageModule } from "primeng/message";
+import { NotificationService } from "../../../core/services/notification.service";
 
 @Component({
   selector: "app-demandes-liste",
@@ -23,6 +29,7 @@ import { MessageModule } from "primeng/message";
     ButtonModule,
     TooltipModule,
     CommonModule,
+    FormsModule,
     MessageModule,
     CardModule,
     BreadcrumbModule,
@@ -32,7 +39,6 @@ import { MessageModule } from "primeng/message";
   ],
   templateUrl: "./demandes-liste.component.html",
   styleUrls: ["./demandes-liste.component.scss"],
-  providers: [ConfirmationService],
 })
 export class DemandesListeComponent implements OnInit, OnDestroy {
   demandes: Demande[] = [];
@@ -40,20 +46,24 @@ export class DemandesListeComponent implements OnInit, OnDestroy {
   recherche = "";
   etatFiltre: EtatDemande | null = null;
 
-  // Pagination
   totalRecords = 0;
   recordsPerPage = 10;
   currentPage = 0;
 
-  // Modales
   formulaireVisible = false;
   demandeAEditer: Demande | null = null;
   detailVisible = false;
   demandeDetail: Demande | null = null;
 
+  /* AFFECTATION (Chef Département — vérifié côté backend tant que Keycloak n'est pas branché) */
+  affectationVisible = false;
+  demandeAAffecter: Demande | null = null;
+  agentsAffectables: AgentResume[] = [];
+  idAgentSelectionne: number | null = null;
+  affectationEnCours = false;
+
   items: MenuItem[] = [];
 
-  // Message personnalisé
   message: {
     severity: "error" | "success" | "info" | "warn" | "secondary" | "contrast";
     text: string;
@@ -71,7 +81,10 @@ export class DemandesListeComponent implements OnInit, OnDestroy {
     { valeur: "ANNULEE", libelle: "Annulée" },
   ];
 
-  constructor(private demandeService: DemandeService) {}
+  constructor(
+    private demandeService: DemandeService,
+    private notification: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.menuTool();
@@ -156,14 +169,13 @@ export class DemandesListeComponent implements OnInit, OnDestroy {
     return new Date(date);
   }
 
-  // ---------- Actions ----------
+  /* CRÉATION / MODIFICATION */
   ouvrirCreation(): void {
     this.demandeAEditer = null;
     this.formulaireVisible = true;
   }
 
   ouvrirModification(demande: Demande): void {
-    // Vérifier si la demande est encore modifiable (état EN_ATTENTE)
     if (demande.etat !== "EN_ATTENTE") {
       this.showMessage({
         severity: "warn",
@@ -181,16 +193,18 @@ export class DemandesListeComponent implements OnInit, OnDestroy {
   }
 
   onDemandeEnregistree(): void {
+    const etaitEnModification = !!this.demandeAEditer;
     this.fermerFormulaire();
     this.loadAll();
     this.showMessage({
       severity: "success",
-      text: this.demandeAEditer
+      text: etaitEnModification
         ? "Demande modifiée avec succès"
         : "Demande créée avec succès",
     });
   }
 
+  /* DÉTAIL */
   ouvrirDetail(demande: Demande): void {
     this.demandeDetail = demande;
     this.detailVisible = true;
@@ -201,7 +215,59 @@ export class DemandesListeComponent implements OnInit, OnDestroy {
     this.demandeDetail = null;
   }
 
-  // ---------- Aide pour les statuts ----------
+  /* AFFECTATION */
+  ouvrirAffectation(demande: Demande): void {
+    if (demande.etat !== "VALIDEE_CHEF_DEPARTEMENT") {
+      this.showMessage({
+        severity: "warn",
+        text: "La demande doit d'abord être validée.",
+      });
+      return;
+    }
+    this.demandeAAffecter = demande;
+    this.idAgentSelectionne = null;
+    this.affectationVisible = true;
+    this.demandeService.listerAgentsAffectables().subscribe({
+      next: (agents) => (this.agentsAffectables = agents),
+      error: () =>
+        this.notification.error("Erreur lors du chargement des agents."),
+    });
+  }
+
+  fermerAffectation(): void {
+    this.affectationVisible = false;
+    this.demandeAAffecter = null;
+  }
+
+  confirmerAffectation(): void {
+    if (!this.demandeAAffecter || !this.idAgentSelectionne) return;
+
+    this.affectationEnCours = true;
+    this.demandeService
+      .affecter(this.demandeAAffecter.idDemande, {
+        idAgentAffecte: this.idAgentSelectionne,
+      })
+      .subscribe({
+        next: () => {
+          this.affectationEnCours = false;
+          this.fermerAffectation();
+          this.loadAll();
+          this.showMessage({
+            severity: "success",
+            text: "Demande affectée avec succès.",
+          });
+        },
+        error: (erreur) => {
+          this.affectationEnCours = false;
+          // Message backend explicite si l'utilisateur courant n'a pas le rôle Chef Département
+          this.notification.error(
+            erreur?.error?.message || "Erreur lors de l'affectation.",
+          );
+        },
+      });
+  }
+
+  /* AIDE STATUTS */
   getEtatLibelle(etat: EtatDemande): string {
     switch (etat) {
       case "EN_ATTENTE":

@@ -12,7 +12,7 @@
           class="bouton-primaire"
           (click)="openModalCreate()">
           <i class="pi pi-plus"></i>
-          Ajouter
+          Effectuer un nouvel approvisionnement
         </button>
       </div>
       <div class="approvisionnement-page__actions">
@@ -142,7 +142,8 @@
       [resizable]="false"
       [style]="{ width: '800px' }">
       <app-approvisionnement-detail
-        [approvisionnement]="approvisionnementSelectionne">
+        [approvisionnement]="approvisionnementSelectionne"
+        (ligneCorrigee)="onLigneCorrigee($event)">
       </app-approvisionnement-detail>
 
       <ng-template pTemplate="footer">

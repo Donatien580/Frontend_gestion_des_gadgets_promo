@@ -1,28 +1,21 @@
 <header class="app-en-tete">
   <div class="app-en-tete__actions">
-    <!-- <app-selecteur-theme /> -->
-
-    <button
-      class="app-en-tete__icon-btn"
-      type="button"
-      aria-label="Notifications">
-      <i class="pi pi-bell"></i>
-      <span class="app-en-tete__badge">3</span>
-    </button>
-
     <div class="app-en-tete__divider"></div>
 
     <div class="app-en-tete__profile">
-      <div class="app-en-tete__avatar">{{ utilisateurCourant.initiales }}</div>
+      <div class="app-en-tete__avatar">{{ initiales }}</div>
       <div class="app-en-tete__profile-text">
-        <span class="app-en-tete__profile-name">{{
-          utilisateurCourant.nomComplet
-        }}</span>
-        <span class="app-en-tete__profile-role">{{
-          utilisateurCourant.role
-        }}</span>
+        <span class="app-en-tete__profile-name">{{ nomComplet }}</span>
+        <span class="app-en-tete__profile-role">{{ libelleRole }}</span>
       </div>
-      <i class="pi pi-angle-down"></i>
+      <button
+        type="button"
+        class="app-en-tete__icon-btn"
+        aria-label="Déconnexion"
+        title="Déconnexion"
+        (click)="seDeconnecter()">
+        <i class="pi pi-sign-out"></i>
+      </button>
     </div>
   </div>
 </header>

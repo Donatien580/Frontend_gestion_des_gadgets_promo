@@ -85,6 +85,44 @@
     }
   }
 
+  &__left {
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 1.15rem;
+    font-weight: 650;
+
+    .bouton-primaire {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      height: 36px;
+      padding: 0 1rem;
+      border: none;
+      border-radius: 0;
+      background: #1889e5;
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      &:hover {
+        background: #1664a3;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #095a8d;
+        outline-offset: 2px;
+      }
+    }
+  }
+
   /* ACTIONS */
 
   &__actions {
@@ -448,4 +486,8 @@
 
 .font-bold {
   font-weight: bold;
+}
+
+.required {
+  color: #dc2626;
 }

@@ -1,23 +1,43 @@
 <form [formGroup]="formulaire" class="formulaire">
   <div class="formulaire__ligne-entete">
     <div class="champ">
-      <label for="fournisseur"> Fournisseur * </label>
+      <label for="fournisseur">
+        Fournisseur <span class="required">*</span>
+      </label>
 
-      <input
-        id="fournisseur"
-        type="text"
+      <p-autoComplete
+        inputId="fournisseur"
         formControlName="fournisseur"
-        placeholder="Nom du fournisseur" />
+        [suggestions]="suggestionsFournisseurs"
+        (completeMethod)="rechercherFournisseurs($event)"
+        [dropdown]="false"
+        placeholder="Nom du fournisseur"
+        styleClass="w-full" />
 
       @if (fournisseur.invalid && fournisseur.touched) {
         <span class="champ__erreur"> Le fournisseur est obligatoire. </span>
       }
     </div>
+    <div class="champ">
+      <label for="adresseFournisseur"> Adresse du fournisseur * </label>
+      <input
+        id="adresseFournisseur"
+        type="text"
+        formControlName="adresseFournisseur"
+        placeholder="Adresse du fournisseur" />
+
+      @if (adresseFournisseur.invalid && adresseFournisseur.touched) {
+        <span class="champ__erreur">
+          L'adresse du fournisseur est obligatoire.
+        </span>
+      }
+    </div>
 
     <!-- Numéro PV -->
-
     <div class="champ">
-      <label for="numeroPV"> N° de PV de réception </label>
+      <label for="numeroPV">
+        N° de PV de réception <span class="required">*</span></label
+      >
 
       <div class="numero-pv">
         <span class="numero-pv__prefixe"> PV- </span>
@@ -34,13 +54,24 @@
       @if (numeroPVApercu) {
         <span class="champ__aide">
           Numéro final :
-          <strong>
-            {{ numeroPVApercu }}
-          </strong>
+          <strong>{{ numeroPVApercu }}</strong>
         </span>
       } @else {
         <span class="champ__aide"> Exemple : PV-001 </span>
       }
+    </div>
+
+    <!-- Numéro de marché -->
+    <div class="champ">
+      <label for="numeroMarche">
+        N° de marché <span class="required">*</span>
+      </label>
+
+      <input
+        id="numeroMarche"
+        type="text"
+        formControlName="numeroMarche"
+        placeholder="Numéro du marché" />
     </div>
   </div>
 
@@ -59,7 +90,6 @@
 
   <div class="formulaire__titre-container">
     <h3 class="formulaire__titre-lignes">Gadgets réceptionnés</h3>
-
     <span class="formulaire__aide">
       Ajoutez les gadgets concernés par cette réception.
     </span>
@@ -70,7 +100,7 @@
       <div class="ligne-approvisionnement" [formGroupName]="i">
         <div class="ligne-approvisionnement__grille">
           <div class="champ">
-            <label> Catégorie </label>
+            <label> Catégorie <span class="required">*</span></label>
             <p-select
               [options]="categoriesDisponibles"
               optionLabel="libelle"
@@ -83,7 +113,7 @@
           </div>
 
           <div class="champ">
-            <label> Gadget * </label>
+            <label> Gadget <span class="required">*</span> </label>
             <p-select
               [options]="gadgetsParLigne[i]"
               optionLabel="libelle"
@@ -97,19 +127,16 @@
 
           <div class="champ champ--etroit">
             <label> Qté commandée </label>
-
             <input type="number" min="0" formControlName="quantiteCommandee" />
           </div>
 
           <div class="champ champ--etroit">
-            <label> Qté reçue * </label>
-
+            <label> Qté reçue <span class="required">*</span> </label>
             <input type="number" min="1" formControlName="quantiteRecue" />
           </div>
 
           <div class="champ champ--etroit">
-            <label> Qté défectueuse </label>
-
+            <label> Qté défectueuse <span class="required">*</span> </label>
             <input
               type="number"
               min="0"
@@ -118,10 +145,7 @@
 
           <div class="champ champ--etroit champ--lecture-seule">
             <label> Conforme </label>
-
-            <span class="valeur-calculee">
-              {{ quantiteConforme(i) }}
-            </span>
+            <span class="valeur-calculee">{{ quantiteConforme(i) }}</span>
           </div>
 
           <button
@@ -142,7 +166,6 @@
 
         <div class="champ">
           <label> Observation qualité si défectueux </label>
-
           <input
             type="text"
             formControlName="observationQualite"
@@ -152,13 +175,11 @@
     }
   </div>
 
-  <!--AJOUTER UNE LIGNE-->
   <button type="button" class="bouton-secondaire" (click)="ajouterLigne()">
     <i class="pi pi-plus"></i>
     Ajouter un gadget
   </button>
 
-  <!-- ACTIONS -->
   <div class="formulaire__actions">
     <button type="button" class="bouton-annuler" (click)="annulerFormulaire()">
       <i class="pi pi-times"></i>
@@ -171,10 +192,10 @@
       [disabled]="enregistrement"
       (click)="enregistrer()">
       <i class="pi pi-check"></i>
-
       @if (enregistrement) {
         Enregistrement...
       } @else {
+        <i class="pi pi-save"></i>
         Enregistrer
       }
     </button>

@@ -50,25 +50,25 @@ export const routes: Routes = [
           filAriane: [{ libelle: "Approvisionnements", icone: "pi pi-truck" }],
         },
       },
-      {
-        path: "admin/parametres",
-        children: [
-          {
-            path: "services",
-            loadComponent: () =>
-              import("./features/services/page/service-liste.component").then(
-                (m) => m.ServiceListeComponent,
-              ),
-          },
-          {
-            path: "personnels",
-            loadComponent: () =>
-              import("./features/personnels/page/personnel-liste.component").then(
-                (m) => m.PersonnelListeComponent,
-              ),
-          },
-        ],
-      },
+      // {
+      //   path: "admin/parametres",
+      //   children: [
+      //     {
+      //       path: "services",
+      //       loadComponent: () =>
+      //         import("./features/services/page/service-liste.component").then(
+      //           (m) => m.ServiceListeComponent,
+      //         ),
+      //     },
+      //     {
+      //       path: "personnels",
+      //       loadComponent: () =>
+      //         import("./features/personnels/page/personnel-liste.component").then(
+      //           (m) => m.PersonnelListeComponent,
+      //         ),
+      //     },
+      //   ],
+      // },
       {
         path: "demandes",
         loadComponent: () =>

@@ -23,55 +23,73 @@
     <input id="objet" type="text" formControlName="objet" />
   </div>
 
-  <!-- Champs spécifiques selon le type -->
+  <hr class="formulaire__separateur" />
+  <h3>Informations du demandeur</h3>
+
+  <div class="formulaire__ligne">
+    <div class="champ">
+      <label for="nomDemandeur">Nom *</label>
+      <p-autoComplete
+        inputId="nomDemandeur"
+        formControlName="nomDemandeur"
+        [suggestions]="suggestionsNoms"
+        (completeMethod)="rechercherNoms($event)"
+        [dropdown]="false"
+        placeholder="Saisir ou choisir un nom"
+        styleClass="w-full" />
+    </div>
+    <div class="champ">
+      <label for="prenomDemandeur">Prénom</label>
+      <p-autoComplete
+        inputId="prenomDemandeur"
+        formControlName="prenomDemandeur"
+        [suggestions]="suggestionsPrenoms"
+        (completeMethod)="rechercherPrenoms($event)"
+        [dropdown]="false"
+        placeholder="Saisir ou choisir un prénom"
+        styleClass="w-full" />
+    </div>
+    <div class="champ champ--etroit">
+      <label for="telephoneDemandeur">Téléphone</label>
+      <input
+        id="telephoneDemandeur"
+        type="tel"
+        formControlName="telephoneDemandeur" />
+    </div>
+  </div>
+
   @if (type === "INTERNE") {
     <div class="formulaire__ligne">
-      <div class="champ">
-        <label for="idService">Service demandeur *</label>
-        <select
-          id="idService"
-          formControlName="idService"
-          (change)="onServiceSelected($any($event.target).value)">
-          <option [ngValue]="null" disabled>Sélectionner un service…</option>
-          @for (service of servicesDisponibles; track service.idService) {
-            <option [ngValue]="service.idService">
-              {{ service.libelleService }}
-            </option>
-          }
-        </select>
-      </div>
-      <div class="champ">
-        <label>Responsable</label>
+      <div class="champ champ--etroit">
+        <label for="matriculeDemandeur">Matricule *</label>
         <input
+          id="matriculeDemandeur"
           type="text"
-          [value]="getNomResponsable(formulaire.get('idService')?.value)"
-          disabled />
+          formControlName="matriculeDemandeur" />
       </div>
-    </div>
-    <div class="champ champ--etroit">
-      <label for="nombrePersonnelsImpactes"
-        >Nombre de personnels impactés *</label
-      >
-      <input
-        id="nombrePersonnelsImpactes"
-        type="number"
-        min="1"
-        formControlName="nombrePersonnelsImpactes" />
+      <div class="champ">
+        <label for="serviceDemandeur">Service *</label>
+        <p-autoComplete
+          inputId="serviceDemandeur"
+          formControlName="serviceDemandeur"
+          [suggestions]="suggestionsServices"
+          (completeMethod)="rechercherServices($event)"
+          [dropdown]="false"
+          placeholder="Saisir ou choisir un service"
+          styleClass="w-full" />
+      </div>
     </div>
   } @else {
-    <div class="formulaire__ligne">
-      <div class="champ">
-        <label for="structure">Structure *</label>
-        <input id="structure" type="text" formControlName="structure" />
-      </div>
-      <div class="champ">
-        <label for="representant">Représentant *</label>
-        <input id="representant" type="text" formControlName="representant" />
-      </div>
-    </div>
-    <div class="champ champ--etroit">
-      <label for="telephone">Téléphone</label>
-      <input id="telephone" type="tel" formControlName="telephone" />
+    <div class="champ">
+      <label for="structureDemandeur">Structure *</label>
+      <p-autoComplete
+        inputId="structureDemandeur"
+        formControlName="structureDemandeur"
+        [suggestions]="suggestionsStructures"
+        (completeMethod)="rechercherStructures($event)"
+        [dropdown]="false"
+        placeholder="Saisir ou choisir une structure"
+        styleClass="w-full" />
     </div>
   }
 
@@ -83,57 +101,6 @@
       formControlName="observations"
       rows="2"></textarea>
   </div>
-
-  <hr class="formulaire__separateur" />
-  <h3>Gadgets demandés</h3>
-
-  <!-- Lignes de demande -->
-  <div formArrayName="lignes" class="lignes-demande">
-    @for (ligne of lignes.controls; track ligne; let i = $index) {
-      <div class="ligne-demande" [formGroupName]="i">
-        <div class="champ">
-          <label>Catégorie</label>
-          <p-select
-            [options]="categoriesDisponibles"
-            optionLabel="libelle"
-            optionValue="idCategorie"
-            formControlName="idCategorieFiltre"
-            (onChange)="onCategorieChange(i, $event.value)"
-            placeholder="Tous les catégories"
-            [showClear]="true"
-            class="w-full"></p-select>
-        </div>
-        <div class="champ">
-          <label>Gadget *</label>
-          <p-select
-            [options]="gadgetsParLigne[i]"
-            optionLabel="libelle"
-            optionValue="idGadget"
-            formControlName="idGadget"
-            [filter]="true"
-            filterBy="libelle"
-            placeholder="Sélectionner une gadget"
-            class="w-full"></p-select>
-        </div>
-        <div class="champ champ--etroit">
-          <label>Quantité *</label>
-          <input type="number" min="1" formControlName="quantiteDemandee" />
-        </div>
-        <button
-          type="button"
-          class="bouton-icone bouton-icone--supprimer"
-          (click)="retirerLigne(i)"
-          [disabled]="lignes.length === 1"
-          aria-label="Retirer cette ligne">
-          <i class="pi pi-trash"></i>
-        </button>
-      </div>
-    }
-  </div>
-
-  <button type="button" class="bouton-secondaire" (click)="ajouterLigne()">
-    <i class="pi pi-plus"></i> Ajouter un gadget
-  </button>
 
   <p-fieldset
     legend="La pièce justificative est obligatoire*"

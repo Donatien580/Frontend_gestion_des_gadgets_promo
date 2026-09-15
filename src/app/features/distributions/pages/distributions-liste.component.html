@@ -14,8 +14,13 @@
           <i class="pi pi-plus"></i> Nouvelle distribution
         </button>
       </div>
-      <!-- Pas de recherche pour l'instant, on peut en ajouter plus tard -->
     </div>
+
+    @if (message) {
+      <p-message
+        [severity]="message.severity"
+        [text]="message.text"></p-message>
+    }
 
     <div class="distribution-page__table">
       <p-table
@@ -35,7 +40,7 @@
             <th>Bordereau</th>
             <th>Date</th>
             <th>Type</th>
-            <th>Destinataire</th>
+            <th>Bénéficiaire</th>
             <th>État</th>
             <th class="actions-column">Actions</th>
           </tr>
@@ -55,8 +60,22 @@
               } @else {
                 <span class="type-externe"> Externe </span>
               }
+              @if (distribution.estDotation) {
+                <span class="badge-dotation">Dotation</span>
+              }
             </td>
-            <td>{{ distribution.destinataire || "—" }}</td>
+            <td>
+              @if (distribution.typeDistribution === "INTERNE") {
+                {{ distribution.nomReceptionnaire
+                }}{{
+                  distribution.prenomReceptionnaire
+                    ? " " + distribution.prenomReceptionnaire
+                    : ""
+                }}
+              } @else {
+                {{ distribution.destinataire || "—" }}
+              }
+            </td>
             <td>
               <span
                 class="statut-demande"
@@ -66,16 +85,7 @@
             </td>
             <td>
               <div class="actions-cell">
-                <p-button
-                  icon="pi pi-eye"
-                  [text]="true"
-                  [rounded]="true"
-                  severity="info"
-                  pTooltip="Détail"
-                  tooltipPosition="top"
-                  (onClick)="ouvrirDetail(distribution)"></p-button>
-
-                <!-- @if (distribution.etat === "EN_ATTENTE") {
+                @if (distribution.etat === "EN_ATTENTE") {
                   <p-button
                     icon="pi pi-play"
                     [text]="true"
@@ -86,7 +96,15 @@
                     (onClick)="
                       executer(distribution.idDistribution)
                     "></p-button>
-                } -->
+                }
+                <p-button
+                  icon="pi pi-eye"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  pTooltip="Détail"
+                  tooltipPosition="top"
+                  (onClick)="ouvrirDetail(distribution)"></p-button>
               </div>
             </td>
           </tr>
@@ -101,7 +119,8 @@
                 </div>
                 <strong>Aucune distribution trouvée</strong>
                 <span
-                  >Créez une distribution à partir d'une demande acceptée.</span
+                  >Créez une distribution à partir d'une demande affectée, ou
+                  une dotation.</span
                 >
               </div>
             </td>
@@ -117,11 +136,13 @@
       [modal]="true"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '600px' }"
+      [style]="{ width: '750px' }"
       (onHide)="fermerCreation()">
-      <app-distribution-formulaire
-        (enregistre)="onDistributionCreee()"
-        (annuler)="fermerCreation()"></app-distribution-formulaire>
+      @if (creationVisible) {
+        <app-distribution-formulaire
+          (enregistre)="onDistributionCreee()"
+          (annuler)="fermerCreation()"></app-distribution-formulaire>
+      }
     </p-dialog>
 
     <!-- Modale de détail -->
@@ -131,12 +152,13 @@
       [modal]="true"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '700px' }">
-      <app-distribution-detail
-        [distribution]="distributionDetail"
-        (signe)="
-          signer(distributionDetail?.idDistribution!)
-        "></app-distribution-detail>
+      [style]="{ width: '700px' }"
+      (onHide)="fermerDetail()">
+      @if (detailVisible && distributionDetail) {
+        <app-distribution-detail
+          [distribution]="distributionDetail"
+          (actionEffectuee)="loadAll()"></app-distribution-detail>
+      }
       <ng-template pTemplate="footer">
         <p-button
           label="Fermer"

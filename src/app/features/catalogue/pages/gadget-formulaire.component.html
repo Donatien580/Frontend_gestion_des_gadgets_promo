@@ -1,30 +1,33 @@
 <form [formGroup]="formulaire" class="gadget-formulaire">
   <!--PHOTO-->
-  <div class="gadget-formulaire__photo">
-    <div class="photo-preview">
-      @if (apercuUrl) {
-        <img [src]="apercuUrl | urlPhoto" alt="Photo du gadget" />
-      } @else {
-        <i class="pi pi-image"></i>
-      }
-    </div>
+  <fieldset class="form-fieldset">
+    <legend>Photo du gadget <span>*</span></legend>
+    <div class="gadget-formulaire__photo">
+      <div class="photo-preview">
+        @if (apercuUrl) {
+          <img [src]="apercuUrl | urlPhoto" alt="Photo du gadget" />
+        } @else {
+          <i class="pi pi-image"></i>
+        }
+      </div>
 
-    <div class="photo-actions">
-      <label class="photo-button">
-        <i class="pi pi-upload"></i>
-        {{ apercuUrl ? "Changer la photo" : "Choisir une photo" }}
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          (change)="choisirPhoto($event)" />
-      </label>
-      <small> JPEG, PNG ou WEBP — 5 Mo maximum. </small>
+      <div class="photo-actions">
+        <label class="photo-button">
+          <i class="pi pi-upload"></i>
+          {{ apercuUrl ? "Changer la photo" : "Choisir une photo" }}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="choisirPhoto($event)" />
+        </label>
+        <small> JPEG, PNG ou WEBP — 5 Mo maximum. </small>
+      </div>
     </div>
-  </div>
+  </fieldset>
 
   <!-- LIBELLÉ-->
   <div class="form-field">
-    <label for="libelle"> Libellé * </label>
+    <label for="libelle"> Libellé <span>*</span> </label>
     <input
       id="libelle"
       type="text"
@@ -53,7 +56,7 @@
 
     <!-- Catégorie -->
     <div class="form-field">
-      <label for="categorie"> Catégorie * </label>
+      <label for="categorie"> Catégorie <span>*</span> </label>
       <select id="categorie" formControlName="idCategorie">
         <option [ngValue]="null" disabled>Sélectionner une catégorie</option>
         @for (categorie of categories; track categorie.idCategorie) {
@@ -82,7 +85,7 @@
 
   <!--SEUIL -->
   <div class="form-field form-field--small">
-    <label for="seuilAlerte"> Seuil d'alerte * </label>
+    <label for="seuilAlerte"> Seuil d'alerte <span>*</span> </label>
     <input
       id="seuilAlerte"
       type="number"
@@ -105,7 +108,7 @@
     </p-button>
     <p-button
       [disabled]="isSaving"
-      icon="pi pi-check"
+      icon="pi pi-save"
       label="Enregistrer"
       [raised]="true"
       severity="success"

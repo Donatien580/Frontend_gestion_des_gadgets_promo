@@ -11,6 +11,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { SelectModule } from "primeng/select";
+import { AutoCompleteModule } from "primeng/autocomplete";
 
 import { ApprovisionnementService } from "../services/approvisionnement.service";
 import { GadgetService } from "../../catalogue/services/gadget.service";
@@ -23,7 +24,12 @@ import { Categorie, Gadget } from "../../../core/models";
   selector: "app-approvisionnement-formulaire",
   standalone: true,
 
-  imports: [CommonModule, ReactiveFormsModule, SelectModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SelectModule,
+    AutoCompleteModule,
+  ],
 
   templateUrl: "./approvisionnement-formulaire.component.html",
   styleUrl: "./approvisionnement-formulaire.component.scss",
@@ -41,6 +47,8 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
   enregistrement = false;
   formulaire: FormGroup;
 
+  suggestionsFournisseurs: string[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private approvisionnementService: ApprovisionnementService,
@@ -50,7 +58,9 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
   ) {
     this.formulaire = this.formBuilder.group({
       fournisseur: ["", [Validators.required]],
+      adresseFournisseur: ["", [Validators.required]],
       numeroPV: ["", [Validators.pattern(/^\d*$/)]],
+      numeroMarche: [""],
       observations: [""],
       lignes: this.formBuilder.array([this.creerLigne()]),
     });
@@ -68,6 +78,12 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
         this.notification.error("Erreur lors du chargement des catégories.");
       },
     });
+  }
+
+  rechercherFournisseurs(event: { query: string }): void {
+    this.approvisionnementService
+      .suggererFournisseurs(event.query)
+      .subscribe((resultats) => (this.suggestionsFournisseurs = resultats));
   }
 
   /* CHARGER LES GADGETS PAR CATEGORIE*/
@@ -88,9 +104,6 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
     });
   }
 
-  /*
-   *lorsque la catégorie sélectionnée change, on recharge les gadgets correspondants.
-   */
   onCategorieChange(index: number, idCategorie: number | null): void {
     this.lignes.at(index).get("idGadget")?.reset(null);
     this.chargerGadgetsPourLigne(index, idCategorie);
@@ -124,14 +137,13 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
         quantiteDefectueuse: [0, [Validators.min(0)]],
         observationQualite: [""],
       },
-
       {
         validators: this.verifierQuantiteDefectueuse,
       },
     );
   }
 
-  /* CALCUL QUANTITÉ CONFORME*/
+  /* CALCUL QUANTITÉ CONFORME (jamais envoyée au backend, juste pour l'affichage) */
   quantiteConforme(index: number): number {
     const ligne = this.lignes.at(index);
     const quantiteRecue = ligne.get("quantiteRecue")?.value || 0;
@@ -139,19 +151,13 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
     return Math.max(0, quantiteRecue - quantiteDefectueuse);
   }
 
-  /*VALIDATION DES QUANTITÉS */
   verifierQuantiteDefectueuse(
     controle: AbstractControl,
   ): ValidationErrors | null {
     const quantiteRecue = controle.get("quantiteRecue")?.value || 0;
     const quantiteDefectueuse = controle.get("quantiteDefectueuse")?.value || 0;
     if (quantiteDefectueuse > quantiteRecue || quantiteDefectueuse < 0) {
-      return {
-        defectueuseSuperieureARecue: true,
-      };
-      // this.notification.error(
-      //   "La quantité défectueuse, doit être un entier positif",
-      // );
+      return { defectueuseSuperieureARecue: true };
     }
     return null;
   }
@@ -178,10 +184,11 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
     const valeurs = this.formulaire.getRawValue();
     const donnees = {
       fournisseur: valeurs.fournisseur,
+      adresseFournisseur: valeurs.adresseFournisseur,
       numeroPV: valeurs.numeroPV
         ? "PV-" + valeurs.numeroPV.padStart(3, "0")
         : undefined,
-
+      numeroMarche: valeurs.numeroMarche || undefined,
       observations: valeurs.observations || undefined,
       lignes: valeurs.lignes.map((ligne: any) => ({
         idGadget: ligne.idGadget,
@@ -216,7 +223,9 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
   reinitialiserFormulaire(): void {
     this.formulaire.reset({
       fournisseur: "",
+      adresseFournisseur: "",
       numeroPV: "",
+      numeroMarche: "",
       observations: "",
     });
 
@@ -230,12 +239,19 @@ export class ApprovisionnementFormulaireComponent implements OnInit {
   }
 
   /*GETTERS */
-
   get fournisseur() {
     return this.formulaire.controls["fournisseur"];
   }
 
+  get adresseFournisseur() {
+    return this.formulaire.controls["adresseFournisseur"];
+  }
+
   get numeroPV() {
     return this.formulaire.controls["numeroPV"];
+  }
+
+  get numeroMarche() {
+    return this.formulaire.controls["numeroMarche"];
   }
 }

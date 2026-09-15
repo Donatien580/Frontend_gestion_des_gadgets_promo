@@ -1,29 +1,30 @@
-import { Component, signal } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
 import { CarteIndicateurComponent } from "../../../shared/components/carte-indicateur/carte-indicateur.component";
 import { BadgeStatutComponent } from "../../../shared/components/badge-statut/badge-statut.component";
 import { IDENTITES_MODULES } from "../../../shared/constantes/identites-modules";
+import { TableauDeBordService } from "../services/tableau-de-bord.service";
+import {
+  GadgetAlerte,
+  NiveauStockGadget,
+  TableauDeBord,
+} from "../../../core/models/tableau-de-bord.model";
+import { Demande } from "../../../core/models/demande.model";
 
-type IdWidget = "kpis" | "raccourcis" | "demandes" | "alertes";
+type IdSection = "kpis" | "repartitionEtAlertes" | "raccourcis" | "demandes";
 
-interface DefinitionWidget {
-  id: IdWidget;
+interface DefinitionSection {
+  id: IdSection;
   titre: string;
   icone: string;
 }
 
-const CLE_STOCKAGE_ORDRE = "gadgets-dashboard-widgets-ordre";
-const ORDRE_PAR_DEFAUT: IdWidget[] = [
-  "kpis",
-  "raccourcis",
-  "demandes",
-  "alertes",
+const SECTIONS: DefinitionSection[] = [
+  { id: "kpis", titre: "Indicateurs clés", icone: "pi pi-chart-line" },
+  { id: "repartitionEtAlertes", titre: "Stock", icone: "pi pi-database" },
+  { id: "raccourcis", titre: "Accès rapides", icone: "pi pi-th-large" },
+  { id: "demandes", titre: "Demandes récentes", icone: "pi pi-inbox" },
 ];
 
 @Component({
@@ -32,93 +33,71 @@ const ORDRE_PAR_DEFAUT: IdWidget[] = [
   imports: [
     CommonModule,
     RouterLink,
-    DragDropModule,
     CarteIndicateurComponent,
     BadgeStatutComponent,
   ],
   templateUrl: "./tableau-de-bord.component.html",
   styleUrl: "./tableau-de-bord.component.scss",
 })
-export class TableauDeBordComponent {
-  protected readonly definitionsWidgets: Record<IdWidget, DefinitionWidget> = {
-    kpis: { id: "kpis", titre: "Indicateurs clés", icone: "pi pi-chart-line" },
-    raccourcis: {
-      id: "raccourcis",
-      titre: "Accès rapides",
-      icone: "pi pi-th-large",
-    },
-    demandes: {
-      id: "demandes",
-      titre: "Demandes récentes",
-      icone: "pi pi-inbox",
-    },
-    alertes: {
-      id: "alertes",
-      titre: "Alertes seuil de stock",
-      icone: "pi pi-exclamation-triangle",
-    },
-  };
-
-  protected readonly ordreWidgets = signal<IdWidget[]>(this.chargerOrdre());
-
+export class TableauDeBordComponent implements OnInit {
+  protected readonly sections = SECTIONS;
   protected readonly modulesRaccourcis = Object.values(
     IDENTITES_MODULES,
   ).filter((m) => m.id !== "admin");
 
-  protected readonly alertesStock = [
-    { libelle: "Casquettes brodées", quantite: 12, seuil: 50 },
-    { libelle: "Clés USB 16 Go", quantite: 8, seuil: 30 },
-    { libelle: "Carnets A5", quantite: 21, seuil: 40 },
-  ];
+  protected chargement = true;
+  protected tableauDeBord: TableauDeBord | null = null;
 
-  protected readonly demandesRecentes = [
-    {
-      numero: "DEM-2026-0142",
-      objet: "Kit de bienvenue partenaires",
-      etat: "EN_ATTENTE",
-      type: "Externe",
-    },
-    {
-      numero: "DEM-2026-0141",
-      objet: "Goodies séminaire annuel",
-      etat: "VALIDEE_CHEF_DEPARTEMENT",
-      type: "Interne",
-    },
-    {
-      numero: "DEM-2026-0140",
-      objet: "Cadeaux fin d'année - Service RH",
-      etat: "AFFECTEE",
-      type: "Interne",
-    },
-    {
-      numero: "DEM-2026-0139",
-      objet: "Stand salon professionnel",
-      etat: "TRAITEE",
-      type: "Externe",
-    },
-  ];
+  constructor(private tableauDeBordService: TableauDeBordService) {}
 
-  deposerWidget(evenement: CdkDragDrop<IdWidget[]>): void {
-    const ordre = [...this.ordreWidgets()];
-    moveItemInArray(ordre, evenement.previousIndex, evenement.currentIndex);
-    this.ordreWidgets.set(ordre);
-    localStorage.setItem(CLE_STOCKAGE_ORDRE, JSON.stringify(ordre));
+  ngOnInit(): void {
+    this.tableauDeBordService.obtenir().subscribe({
+      next: (donnees) => {
+        this.tableauDeBord = donnees;
+        this.chargement = false;
+      },
+      error: () => {
+        this.chargement = false;
+      },
+    });
   }
 
-  private chargerOrdre(): IdWidget[] {
-    try {
-      const stocke = localStorage.getItem(CLE_STOCKAGE_ORDRE);
-      if (!stocke) return ORDRE_PAR_DEFAUT;
-      const ordre = JSON.parse(stocke) as IdWidget[];
-      // Filet de sécurité : si de nouveaux widgets sont ajoutés plus tard,
-      // on les rajoute à la fin plutôt que de les faire disparaître.
-      const complet = [
-        ...ordre,
-        ...ORDRE_PAR_DEFAUT.filter((id) => !ordre.includes(id)),
-      ];
-      return complet.filter((id) => ORDRE_PAR_DEFAUT.includes(id));
-    } catch {
-      return ORDRE_PAR_DEFAUT;
-    }
+  get demandesRecentes(): Demande[] {
+    return this.tableauDeBord?.demandesRecentes ?? [];
+  }
+
+  get gadgetsAlertes(): GadgetAlerte[] {
+    return this.tableauDeBord?.gadgetsAlertes ?? [];
+  }
+
+  get totalAlertes(): number {
+    return (
+      (this.tableauDeBord?.gadgetsEnAlerteCritique ?? 0) +
+      (this.tableauDeBord?.gadgetsEnAlerteAvertissement ?? 0)
+    );
+  }
+
+  get libelleCategories(): string {
+    const total = this.tableauDeBord?.totalCategories ?? 0;
+    return `Réparties sur ${total} catégorie${total > 1 ? "s" : ""}`;
+  }
+
+  get niveauxStockGadgets(): NiveauStockGadget[] {
+    return this.tableauDeBord?.niveauxStockGadgets ?? [];
+  }
+
+  largeurBarre(quantite: number): number {
+    const valeurs = this.niveauxStockGadgets.map((g) => g.quantiteDisponible);
+    const max = valeurs.length ? Math.max(...valeurs) : 0;
+    if (max === 0) return 0;
+    return Math.max(4, Math.round((quantite / max) * 100));
+  }
+
+  classeNiveau(niveau: string): string {
+    return niveau === "CRITIQUE" ? "niveau-critique" : "niveau-avertissement";
+  }
+
+  libelleNiveau(niveau: string): string {
+    return niveau === "CRITIQUE" ? "Critique" : "À surveiller";
   }
 }

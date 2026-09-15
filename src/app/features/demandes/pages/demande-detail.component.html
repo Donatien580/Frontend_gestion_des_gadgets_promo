@@ -1,6 +1,5 @@
 @if (demande) {
   <div class="detail-demande">
-    <!-- En-tête -->
     <div class="detail-demande__header">
       <h3>{{ demande.numeroDemande }}</h3>
       <span class="statut-demande" [class]="getEtatClasse(demande.etat)">
@@ -8,11 +7,11 @@
       </span>
     </div>
 
-    <!-- Informations principales -->
     <div class="detail-demande__infos">
       <div class="info-item"><strong>Objet :</strong> {{ demande.objet }}</div>
       <div class="info-item">
-        <strong>Type :</strong> {{ demande.typeDemande }}
+        <strong>Type :</strong>
+        {{ demande.typeDemande === "INTERNE" ? "Interne" : "Externe" }}
       </div>
       <div class="info-item">
         <strong>Date demande :</strong>
@@ -30,33 +29,30 @@
         </div>
       }
 
+      <hr class="detail-demande__separateur" />
+
+      <div class="info-item">
+        <strong>Demandeur :</strong>
+        {{ demande.nomDemandeur
+        }}{{ demande.prenomDemandeur ? " " + demande.prenomDemandeur : "" }}
+      </div>
+      @if (demande.telephoneDemandeur) {
+        <div class="info-item">
+          <strong>Téléphone :</strong> {{ demande.telephoneDemandeur }}
+        </div>
+      }
+
       @if (demande.typeDemande === "INTERNE") {
         <div class="info-item">
-          <strong>Service :</strong> {{ demande.libelleService }}
+          <strong>Matricule :</strong> {{ demande.matriculeDemandeur || "—" }}
         </div>
         <div class="info-item">
-          <strong>Matricule responsable :</strong>
-          {{ demande.matriculeResponsable || "—" }}
-        </div>
-        <div class="info-item">
-          <strong>Nom responsable :</strong> {{ demande.nomResponsable || "—" }}
-        </div>
-        <div class="info-item">
-          <strong>Personnels impactés :</strong>
-          {{ demande.nombrePersonnelsImpactes }}
+          <strong>Service :</strong> {{ demande.serviceDemandeur || "—" }}
         </div>
       } @else {
         <div class="info-item">
-          <strong>Structure :</strong> {{ demande.structure }}
+          <strong>Structure :</strong> {{ demande.structureDemandeur || "—" }}
         </div>
-        <div class="info-item">
-          <strong>Représentant :</strong> {{ demande.representant }}
-        </div>
-        @if (demande.telephone) {
-          <div class="info-item">
-            <strong>Téléphone :</strong> {{ demande.telephone }}
-          </div>
-        }
       }
 
       @if (demande.pieceJustificative) {
@@ -71,64 +67,42 @@
           </a>
         </div>
       }
-    </div>
 
-    <!-- Tableau des gadgets -->
-    <h4 class="table-title">Gadgets demandés</h4>
-    <div class="table-responsive">
-      <table class="table-lignes">
-        <thead>
-          <tr>
-            <th>Gadget</th>
-            <th>Quantité demandée</th>
-            <th>Quantité accordée</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (ligne of demande.lignes; track ligne.idLigne) {
-            <tr>
-              <td>{{ ligne.libelleGadget }}</td>
-              <td>{{ ligne.quantiteDemandee }}</td>
-              <td>{{ ligne.quantiteAccordee ?? "—" }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      @if (demande.agentAffecte) {
+        <div class="info-item">
+          <strong>Agent affecté :</strong> {{ demande.agentAffecte.nom }}
+          {{ demande.agentAffecte.prenom }}
+        </div>
+      }
+      @if (demande.motifRefus) {
+        <div class="info-item">
+          <strong>Motif de refus :</strong> {{ demande.motifRefus }}
+        </div>
+      }
     </div>
-
-    <!-- Agent affecté et motif -->
-    @if (demande.nomAgentAffecte) {
-      <div class="info-item">
-        <strong>Agent affecté :</strong> {{ demande.nomAgentAffecte }}
-      </div>
-    }
-    @if (demande.motifRefus) {
-      <div class="info-item">
-        <strong>Motif de refus :</strong> {{ demande.motifRefus }}
-      </div>
-    }
 
     <!-- Actions conditionnelles -->
-    @if (demande.etat === "EN_ATTENTE") {
+    @if (peutValider || peutRefuser) {
       <div class="detail-demande__actions">
-        <p-button
-          label="Affecter"
-          icon="pi pi-user-plus"
-          severity="info"
-          (onClick)="affecter()"></p-button>
-        <p-button
-          label="Valider"
-          icon="pi pi-check"
-          severity="success"
-          (onClick)="valider()"></p-button>
-        <p-button
-          label="Refuser"
-          icon="pi pi-times"
-          severity="danger"
-          (onClick)="ouvrirRefusDialog()"></p-button>
+        @if (peutValider) {
+          <p-button
+            label="Valider"
+            icon="pi pi-check"
+            severity="success"
+            [disabled]="enCours"
+            (onClick)="valider()"></p-button>
+        }
+        @if (peutRefuser) {
+          <p-button
+            label="Refuser"
+            icon="pi pi-times"
+            severity="danger"
+            [disabled]="enCours"
+            (onClick)="ouvrirRefusDialog()"></p-button>
+        }
       </div>
     }
-    <!-- Pied de modale -->
+
     <div class="detail-demande__footer">
       <p-button
         label="Fermer"
@@ -167,7 +141,7 @@
       label="Confirmer le refus"
       icon="pi pi-check"
       severity="danger"
-      [disabled]="!motifRefus.trim()"
+      [disabled]="!motifRefus.trim() || enCours"
       (onClick)="confirmerRefus()"></p-button>
   </ng-template>
 </p-dialog>
